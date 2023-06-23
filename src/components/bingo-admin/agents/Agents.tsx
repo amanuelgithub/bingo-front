@@ -4,33 +4,55 @@ import { IoAdd } from "react-icons/io5";
 import { getAuthUser } from "../../../util/localstorage";
 import Button from "../../form/Button";
 import CreateAgent from "./CreateAgent";
+import { Toaster } from "react-hot-toast";
 
 function Agents() {
-  const [createAgent, setCreateAgent] = useState(false);
+  const [agentCreated, setAgentCreated] = useState(false);
+  const [createAgentFormOpen, setCreateAgentFormOpen] = useState(false);
   const [agents, setAgents] = useState<any[]>([]);
 
-  useEffect(() => {
-    const { id, isLoggedIn, accessToken } = getAuthUser();
+  const fetchAgents = () => {
+    const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
     API.get("/agents").then((result) => {
       console.log("agents: ", result.data);
       setAgents(result.data);
     });
+  };
+
+  useEffect(() => {
+    fetchAgents();
   }, []);
+
+  // agent-created -> refetch agents
+  useEffect(() => {
+    if (agentCreated) {
+      fetchAgents();
+    }
+
+    return () => {
+      setAgentCreated(false);
+    };
+  }, [agentCreated]);
 
   return (
     <div className="px-2">
-      <div className={`${!createAgent ? "hidden" : "block"}`}>
-        <CreateAgent onCreateAgent={setCreateAgent} />
+      <Toaster />
+
+      <div className={`${!createAgentFormOpen ? "hidden" : "block"}`}>
+        <CreateAgent
+          setCreateAgentFormOpen={setCreateAgentFormOpen}
+          setAgentCreated={setAgentCreated}
+        />
       </div>
 
       <div className="flex flex-row justify-between py-2 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold">Agents</h2>
 
-        {!createAgent && (
+        {!createAgentFormOpen && (
           <Button
-            onClick={() => setCreateAgent(true)}
+            onClick={() => setCreateAgentFormOpen(true)}
             className={"flex flex-row items-center justify-center gap-2"}
           >
             <IoAdd />

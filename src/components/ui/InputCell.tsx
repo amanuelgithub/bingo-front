@@ -38,8 +38,8 @@ function InputCell({
      ${xIsSize ? "border-b-0" : ""}
      ${yIsSize ? "border-r-0" : ""}
        
-      flex h-20 w-20 items-center justify-center rounded-md border-[0.5px] border-gray-700 bg-yellow-500 text-lg font-semibold 
-       sm:h-24 sm:w-24 sm:text-3xl`}
+      flex h-14 w-14 items-center justify-center rounded-md border-[0.5px] border-gray-700 bg-yellow-500 text-lg 
+       font-semibold sm:h-24 sm:w-24 sm:text-3xl`}
     >
       <input
         type="text"

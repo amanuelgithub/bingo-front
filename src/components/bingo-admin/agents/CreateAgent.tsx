@@ -2,38 +2,45 @@ import React, { useEffect, useState } from "react";
 import { getAuthUser } from "../../../util/localstorage";
 import API from "../../../config/api";
 import { Field, Formik } from "formik";
-import * as yup from "yup";
 import TextField from "../../form/TextField";
 import Button from "../../form/Button";
 import { UserRoleEnum, UserStatusEnum } from "../../../models/IUser";
+import toast from "react-hot-toast";
 
 interface Props {
-  onCreateAgent: (val: boolean) => void;
+  setCreateAgentFormOpen: (val: boolean) => void;
+  setAgentCreated: (val: boolean) => void;
 }
 
-function CreateAgent({ onCreateAgent }: Props) {
+function CreateAgent({ setCreateAgentFormOpen, setAgentCreated }: Props) {
   const [branches, setBranches] = useState([
     { id: "", name: "", createdAt: "", modifiedAt: "" },
   ]);
 
-  const handleCreateBranch = (values: any) => {
-    const { id, isLoggedIn, accessToken } = getAuthUser();
+  const notifyAgentCreated = () =>
+    toast.success("Agent creation success.", {
+      duration: 3000,
+      position: "bottom-center",
+    });
+
+  const handleCreateAgent = (values: any) => {
+    const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
     API.post("/agents", { ...values, role: UserRoleEnum.AGENT })
-      .then((result) => {
-        console.log("create branch: result data: ", result.data);
+      .then(() => {
+        notifyAgentCreated();
+        setAgentCreated(true);
       })
       .catch((err) => console.log("Error: ", err));
   };
 
   // get list of branches
   useEffect(() => {
-    const { id, isLoggedIn, accessToken } = getAuthUser();
+    const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
     API.get("/branches").then((result) => {
-      // console.log("branches: ", result.data);
       setBranches(result.data);
     });
   }, []);
@@ -53,7 +60,7 @@ function CreateAgent({ onCreateAgent }: Props) {
       // })}
       onSubmit={(values, { setSubmitting }) => {
         setSubmitting(true);
-        handleCreateBranch(values);
+        handleCreateAgent(values);
         setSubmitting(false);
       }}
     >
@@ -126,7 +133,7 @@ function CreateAgent({ onCreateAgent }: Props) {
             <div className="flex w-full flex-row justify-between gap-1">
               <Button
                 type={"button"}
-                onClick={() => onCreateAgent(false)}
+                onClick={() => setCreateAgentFormOpen(false)}
                 className={"w-full bg-red-500"}
               >
                 Close

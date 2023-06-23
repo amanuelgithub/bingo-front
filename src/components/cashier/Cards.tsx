@@ -41,7 +41,7 @@ function Cards() {
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-1 bg-gray-100">
-      <h1 className="py-2 text-start text-4xl font-bold sm:w-full md:px-36 lg:px-48">
+      <h1 className="py-2 text-start text-4xl font-bold text-gray-500 sm:w-full md:px-36 lg:px-48">
         All Cards
       </h1>
 
@@ -49,7 +49,7 @@ function Cards() {
         {cards &&
           cards.map((card) => (
             <div className="my-1 flex flex-row items-center justify-between gap-8 bg-gray-200 px-8 py-2 sm:w-full">
-              <h3 className="text-sm font-bold">{card.cardId}</h3>
+              <h3 className="text-sm font-semibold">{card.cardId}</h3>
 
               <div className="flex gap-2">
                 <Link to={`/cashier-dashboard/view-card/${card.cardId}`}>

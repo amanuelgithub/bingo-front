@@ -22,13 +22,13 @@ function Dashboard() {
         <div
           className={`${
             openSidebar ? "block" : "hidden"
-          } absolute left-0 top-0 h-full w-72 bg-blue-600 md:relative md:block md:w-3/12`}
+          } absolute left-0 top-0 z-10 h-full w-72 bg-blue-600 md:relative md:block md:w-3/12`}
         >
           <Sidebar />
         </div>
 
         {/* content */}
-        <div className="h-full bg-gray-100 md:w-9/12 w-full">
+        <div className="h-full w-full bg-gray-100 md:w-9/12">
           <Outlet />
         </div>
       </div>

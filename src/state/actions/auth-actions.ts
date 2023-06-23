@@ -8,7 +8,7 @@ export enum AuthActionTypes {
 
 export interface LoginUser {
   type: AuthActionTypes.LOGIN;
-  id: string;
+  id: string; // userId
   username: string;
   phone: string;
   email: string;
@@ -17,6 +17,10 @@ export interface LoginUser {
   status: UserStatusEnum | undefined;
 
   branchId: string | undefined;
+
+  // cashierId or agentId
+  cashierId: string | undefined;
+  agentId: string | undefined;
 
   // ADDITIONAL INFORMATION TO STORE //
   access_token: string;

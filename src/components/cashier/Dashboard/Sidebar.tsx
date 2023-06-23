@@ -9,7 +9,7 @@ interface ListItemProps {
   icon: any;
   active: boolean;
   index: any;
-  onActiveItemIndex: any;
+  handleActiveItemIndex: any;
 }
 
 function ListItem({
@@ -18,12 +18,20 @@ function ListItem({
   icon,
   active,
   index,
-  onActiveItemIndex,
+  handleActiveItemIndex,
 }: ListItemProps) {
   const location = useLocation();
 
+  if (to === location.pathname) {
+    handleActiveItemIndex(index);
+  }
+
   return (
-    <Link to={to} className="w-full" onClick={() => onActiveItemIndex(index)}>
+    <Link
+      to={to}
+      className="w-full"
+      onClick={() => handleActiveItemIndex(index)}
+    >
       <li
         className={`flex list-none items-center justify-start gap-4 px-4 py-2 hover:bg-blue-700 hover:text-white ${
           active ? "bg-blue-700" : "bg-blue-500"
@@ -53,7 +61,7 @@ export default function Sidebar() {
           to={item.to}
           index={index}
           active={activeItemIndex === index}
-          onActiveItemIndex={handleActiveItemIndex}
+          handleActiveItemIndex={handleActiveItemIndex}
         />
       ))}
     </div>

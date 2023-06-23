@@ -43,6 +43,9 @@ function SignIn() {
 
           branchId: undefined,
 
+          agentId: undefined,
+          cashierId: undefined,
+
           access_token: data.access_token,
           isLoggedIn: true,
         });
@@ -56,6 +59,8 @@ function SignIn() {
           role: data.role,
           status: data.status,
           branchId: undefined,
+          agentId: undefined,
+          cashierId: undefined,
           accessToken: data.access_token,
           isLoggedIn: true,
         });
@@ -81,12 +86,12 @@ function SignIn() {
   }, [authError]);
 
   return (
-    <div className="h-screen md:flex md:flex-row md:justify-center md:items-center">
-      <div className="h-1/2 w-full md:w-1/2 flex flex-col justify-center md:h-screen bg-black">
+    <div className="h-screen md:flex md:flex-row md:items-center md:justify-center">
+      <div className="flex h-1/2 w-full flex-col justify-center bg-black md:h-screen md:w-1/2">
         <img src="/images/bingo-signin-img.jpg" alt="bingo-signin-img" />
       </div>
 
-      <div className="h-1/2 md:w-1/2 bg-gray-50 md:h-screen flex flex-col justify-center items-center -mt-16 md:mt-0">
+      <div className="-mt-16 flex h-1/2 flex-col items-center justify-center bg-gray-50 md:mt-0 md:h-screen md:w-1/2">
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
@@ -99,14 +104,14 @@ function SignIn() {
           {(formik) => (
             <form
               onSubmit={formik.handleSubmit}
-              className="flex flex-col gap-2 w-full p-4 md:p-20"
+              className="flex w-full flex-col gap-2 p-4 md:p-20"
             >
-              <h1 className="font-semibold text-3xl text-center">
+              <h1 className="text-center text-3xl font-semibold">
                 SignIn to Virtual Bingo
               </h1>
 
               {authError && (
-                <p className="text-red-500 text-center">
+                <p className="text-center text-red-500">
                   authentication error!
                 </p>
               )}

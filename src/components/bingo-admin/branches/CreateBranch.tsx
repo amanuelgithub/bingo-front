@@ -5,19 +5,28 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import API from "../../../config/api";
 import { getAuthUser } from "../../../util/localstorage";
+import toast from "react-hot-toast";
 
 interface Props {
-  onCreateBranch: (val: boolean) => void;
+  setCreateBranchFormOpen: (val: boolean) => void;
+  setBranchCreated: (val: boolean) => void;
 }
 
-function CreateBranch({ onCreateBranch }: Props) {
+function CreateBranch({ setCreateBranchFormOpen, setBranchCreated }: Props) {
+  const notifyBranchCreated = () =>
+    toast.success("Branch creation success.", {
+      duration: 3000,
+      position: "bottom-center",
+    });
+
   const handleCreateBranch = (values: any) => {
-    const { id, isLoggedIn, accessToken } = getAuthUser();
+    const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
     API.post("/branches", values)
-      .then((result) => {
-        console.log("create branch: result data: ", result.data);
+      .then(() => {
+        notifyBranchCreated();
+        setBranchCreated(true);
       })
       .catch((err) => console.log("Error: ", err));
   };
@@ -38,7 +47,7 @@ function CreateBranch({ onCreateBranch }: Props) {
         <form onSubmit={formik.handleSubmit}>
           <div
             className={
-              "flex flex-col sm:justify-center items-center sm:flex-row sm:gap-2 gap-3 py-2 sm:px-6 lg:px-8"
+              "flex flex-col items-center gap-3 py-2 sm:flex-row sm:justify-center sm:gap-2 sm:px-6 lg:px-8"
             }
           >
             <h5 className="whitespace-nowrap text-xl font-semibold">
@@ -52,21 +61,21 @@ function CreateBranch({ onCreateBranch }: Props) {
               className={"h-9"}
             />
 
-            <div className="flex flex-row justify-between gap-1 w-full">
+            <div className="flex w-full flex-row justify-between gap-1">
               <Button type={"submit"} className={"w-full"}>
                 Create
               </Button>
               <Button
                 type={"button"}
-                onClick={() => onCreateBranch(false)}
-                className={"bg-red-500 w-full"}
+                onClick={() => setCreateBranchFormOpen(false)}
+                className={"w-full bg-red-500"}
               >
                 Close
               </Button>
             </div>
           </div>
           {formik.touched.name && formik.errors.name ? (
-            <div className="px-2 md:px-8 text-red-600">
+            <div className="px-2 text-red-600 md:px-8">
               {formik.errors.name}
             </div>
           ) : null}

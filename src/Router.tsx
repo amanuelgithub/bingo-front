@@ -19,6 +19,7 @@ import Cashiers from "./components/agent/cashiers/Cashiers";
 import RegisterCard from "./components/agent/RegisterCard";
 import UpdateCard from "./components/agent/UpdateCard";
 import CashierWrapper from "./components/cashier/Dashboard/CashierWrapper";
+import PageNotFound from "./components/PageNotFound";
 
 function Router() {
   return (
@@ -61,6 +62,8 @@ function Router() {
           <Route path="view-card/:cardId" element={<ViewCard />} />
         </Route>
       </Route>
+
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 }

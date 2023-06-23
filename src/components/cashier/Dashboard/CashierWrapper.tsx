@@ -16,7 +16,7 @@ function CashierWrapper() {
     API.get(`/users/${id}`).then((result) => {
       const user = result.data;
 
-      // console.log("find one user: ", user.cashier.branchId);
+      console.log("find one user: ", user);
 
       dispatch({
         type: AuthActionTypes.LOGIN,
@@ -30,6 +30,9 @@ function CashierWrapper() {
 
         branchId: user.cashier.branchId,
 
+        cashierId: user.cashier.id,
+        agentId: undefined,
+
         access_token: accessToken,
         isLoggedIn,
       });
@@ -37,6 +40,8 @@ function CashierWrapper() {
       storeAuthUser({
         ...getAuthUser(),
         branchId: user.cashier.branchId,
+        cashierId: user.cashier.id,
+        agentId: undefined,
       });
 
       setCompleted(true);

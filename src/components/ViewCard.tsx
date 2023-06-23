@@ -3,13 +3,15 @@ import Cell from "./ui/Cell";
 import Button from "./form/Button";
 import API from "../config/api";
 import { getAuthUser } from "../util/localstorage";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 function ViewCard() {
   const [card, setCard] = useState(
     Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => null))
   );
   const { cardId } = useParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const { accessToken, branchId } = getAuthUser();
@@ -47,9 +49,10 @@ function ViewCard() {
   return (
     <div>
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-gray-100">
-        <h3 className="text-3xl font-bold">View Card</h3>
-        <h3 className="bg-white p-1 font-semibold">
-          <span className="text-lg font-bold">Card ID:</span> {cardId}
+        <h3 className="text-2xl font-bold sm:text-3xl">View Card</h3>
+        <h3 className="bg-white p-1 text-sm font-semibold">
+          <span className="text-sm font-bold sm:text-lg">Card ID:</span>{" "}
+          {cardId}
         </h3>
 
         <div className="flex flex-col gap-2 rounded-md border-4 border-blue-500 bg-blue-100 p-6">
@@ -72,11 +75,14 @@ function ViewCard() {
 
           {/* Save & Delete Buttons */}
           <div className="flex w-full justify-between gap-4">
-            <Link to={"/cashier-dashboard/cards"} className="w-full">
-              <Button className="w-full bg-red-600 shadow-md shadow-black">
-                Go Back
-              </Button>
-            </Link>
+            {/* <Link to={navigate(-1)} className="w-full"> */}
+            <Button
+              onClick={() => navigate(-1)}
+              className="w-full bg-red-600 shadow-md shadow-black"
+            >
+              Go Back
+            </Button>
+            {/* </Link> */}
           </div>
         </div>
       </div>

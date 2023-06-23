@@ -30,6 +30,9 @@ function AgentWrapper() {
 
         branchId: user.agent.branchId,
 
+        agentId: user.agent.id,
+        cashierId: undefined,
+
         access_token: accessToken,
         isLoggedIn,
       });
@@ -37,6 +40,8 @@ function AgentWrapper() {
       storeAuthUser({
         ...getAuthUser(),
         branchId: user.agent.branchId,
+        agentId: user.agent.id,
+        cashierId: undefined,
       });
 
       setCompleted(true);

@@ -30,6 +30,9 @@ function AdminWrapper() {
 
         branchId: undefined,
 
+        agentId: undefined,
+        cashierId: undefined,
+
         access_token: accessToken,
         isLoggedIn,
       });

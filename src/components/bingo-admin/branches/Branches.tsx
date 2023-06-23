@@ -4,32 +4,50 @@ import { IoAdd } from "react-icons/io5";
 import API from "../../../config/api";
 import { getAuthUser } from "../../../util/localstorage";
 import CreateBranch from "./CreateBranch";
+import { Toaster } from "react-hot-toast";
 
 function Branches() {
-  const [createBranch, setCreateBranch] = useState(false);
+  const [branchCreated, setBranchCreated] = useState(false);
+  const [createBranchFormOpen, setCreateBranchFormOpen] = useState(false);
   const [branches, setBranches] = useState([
     { id: "", name: "", createdAt: "", modifiedAt: "" },
   ]);
 
-  useEffect(() => {
-    const { id, isLoggedIn, accessToken } = getAuthUser();
+  const fetchBranches = () => {
+    const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
     API.get("/branches").then((result) => {
-      // console.log("branches: ", result.data);
       setBranches(result.data);
     });
+  };
+
+  useEffect(() => {
+    fetchBranches();
   }, []);
+
+  // branch-created -> refetch branches
+  useEffect(() => {
+    if (branchCreated) {
+      fetchBranches();
+    }
+
+    return () => {
+      setBranchCreated(false);
+    };
+  }, [branchCreated]);
 
   return (
     <div className="px-2">
-      <div className="py-2 sm:px-6 lg:px-8 flex flex-row justify-between">
+      <Toaster />
+
+      <div className="flex flex-row justify-between py-2 sm:px-6 lg:px-8">
         <h2 className="text-xl ">Branches</h2>
 
-        {!createBranch && (
+        {!createBranchFormOpen && (
           <Button
-            onClick={() => setCreateBranch(true)}
-            className={"flex flex-row justify-center items-center gap-2"}
+            onClick={() => setCreateBranchFormOpen(true)}
+            className={"flex flex-row items-center justify-center gap-2"}
           >
             <IoAdd />
             <p>add</p>
@@ -37,8 +55,11 @@ function Branches() {
         )}
       </div>
 
-      <div className={`${!createBranch ? "hidden" : "block"}`}>
-        <CreateBranch onCreateBranch={setCreateBranch} />
+      <div className={`${!createBranchFormOpen ? "hidden" : "block"}`}>
+        <CreateBranch
+          setCreateBranchFormOpen={setCreateBranchFormOpen}
+          setBranchCreated={setBranchCreated}
+        />
       </div>
 
       <div className="flex flex-col">

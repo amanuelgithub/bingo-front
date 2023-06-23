@@ -41,7 +41,7 @@ function Cards() {
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-1 bg-gray-100">
-      <h1 className="py-2 text-start text-4xl font-bold sm:w-full md:px-36 lg:px-48">
+      <h1 className="py-2 text-start text-4xl font-bold text-gray-500 sm:w-full md:px-36 lg:px-48">
         All Cards
       </h1>
 
