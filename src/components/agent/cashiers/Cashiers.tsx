@@ -4,12 +4,14 @@ import { IoAdd } from "react-icons/io5";
 import { getAuthUser } from "../../../util/localstorage";
 import Button from "../../form/Button";
 import CreateCashier from "./CreateCashier";
+import { Toaster } from "react-hot-toast";
 
 function Cashiers() {
-  const [createAgent, setCreateAgent] = useState(false);
+  const [cashierCreated, setCashierCreated] = useState(false);
+  const [createAgentFormOpen, setCreateAgentFormOpen] = useState(false);
   const [cashiers, setCashiers] = useState<any[]>([]);
 
-  useEffect(() => {
+  const fetchCashiers = () => {
     const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
@@ -18,20 +20,41 @@ function Cashiers() {
         setCashiers(result.data);
       })
       .catch((err) => console.log("Error: ", err));
+  };
+
+  useEffect(() => {
+    fetchCashiers();
   }, []);
+
+  // cashier-created -> refetch cashiers
+  useEffect(() => {
+    if (cashierCreated) {
+      fetchCashiers();
+    }
+
+    return () => {
+      setCashierCreated(false);
+    };
+  }, [cashierCreated]);
 
   return (
     <div className="px-2">
-      <div className={`${!createAgent ? "hidden" : "block"}`}>
-        <CreateCashier onCreateCashier={setCreateAgent} />
+      <Toaster />
+
+      <div className={`${!createAgentFormOpen ? "hidden" : "block"}`}>
+        <CreateCashier
+          cashierCreated={cashierCreated}
+          setCreateCashierFormOpen={setCreateAgentFormOpen}
+          setCashierCreated={setCashierCreated}
+        />
       </div>
 
       <div className="flex flex-row justify-between py-2 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold">Cashiers</h2>
 
-        {!createAgent && (
+        {!createAgentFormOpen && (
           <Button
-            onClick={() => setCreateAgent(true)}
+            onClick={() => setCreateAgentFormOpen(true)}
             className={"flex flex-row items-center justify-center gap-2"}
           >
             <IoAdd />
@@ -70,29 +93,30 @@ function Cashiers() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cashiers.map((branch) => (
-                    <tr className="border-b bg-neutral-100">
-                      {/* <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700"> */}
-                      <td className="whitespace-nowrap px-6 py-4 font-medium">
-                        {branch.userId}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.username}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.role}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.email}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.phone}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.status}
-                      </td>
-                    </tr>
-                  ))}
+                  {cashiers &&
+                    cashiers.map((branch) => (
+                      <tr className="border-b bg-neutral-100">
+                        {/* <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700"> */}
+                        <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          {branch.userId}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.username}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.role}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.email}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.phone}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.status}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

@@ -35,6 +35,7 @@ function CreateGame() {
     API.get("/games/newly-created")
       .then((res) => {
         // active game exists
+        console.log("active game: ", res.data);
         if (res.data) {
           setActiveGameExists(true);
         }

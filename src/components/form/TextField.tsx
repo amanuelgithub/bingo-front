@@ -5,6 +5,7 @@ interface Props {
   id?: string;
   value?: any;
   onChange?: (event: any) => void;
+  onBlur?: (event: any) => void;
   placeholder?: string;
   className?: any;
 }
@@ -13,6 +14,7 @@ function TextField({
   type,
   value,
   onChange,
+  onBlur,
   placeholder,
   className,
 }: Props) {
@@ -22,6 +24,7 @@ function TextField({
       type={type}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       placeholder={placeholder}
       className={`block w-full border-2 border-black px-2 py-2 outline-blue-300 ${className}`}
     />

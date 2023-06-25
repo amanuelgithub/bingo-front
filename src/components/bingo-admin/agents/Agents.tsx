@@ -15,10 +15,11 @@ function Agents() {
     const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.get("/agents").then((result) => {
-      console.log("agents: ", result.data);
-      setAgents(result.data);
-    });
+    API.get("/agents")
+      .then((result) => {
+        setAgents(result.data);
+      })
+      .catch((err) => console.log("Error: ", err));
   };
 
   useEffect(() => {
@@ -91,29 +92,30 @@ function Agents() {
                   </tr>
                 </thead>
                 <tbody>
-                  {agents.map((branch) => (
-                    <tr className="border-b bg-neutral-100">
-                      {/* <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700"> */}
-                      <td className="whitespace-nowrap px-6 py-4 font-medium">
-                        {branch.userId}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.username}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.role}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.email}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.phone}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {branch.user.status}
-                      </td>
-                    </tr>
-                  ))}
+                  {agents &&
+                    agents.map((branch) => (
+                      <tr className="border-b bg-neutral-100">
+                        {/* <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700"> */}
+                        <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          {branch.userId}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.username}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.role}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.email}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.phone}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.user.status}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
