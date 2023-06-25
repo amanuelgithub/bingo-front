@@ -5,21 +5,24 @@ import API from "../../../config/api";
 import { getAuthUser } from "../../../util/localstorage";
 import CreateBranch from "./CreateBranch";
 import { Toaster } from "react-hot-toast";
+import ReactLoading from "react-loading";
 
 function Branches() {
   const [branchCreated, setBranchCreated] = useState(false);
   const [createBranchFormOpen, setCreateBranchFormOpen] = useState(false);
-  const [branches, setBranches] = useState([
-    { id: "", name: "", createdAt: "", modifiedAt: "" },
-  ]);
+  const [branches, setBranches] = useState<any[]>([]);
 
   const fetchBranches = () => {
-    const { accessToken } = getAuthUser();
-    API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    setTimeout(() => {
+      const { accessToken } = getAuthUser();
+      API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.get("/branches").then((result) => {
-      setBranches(result.data);
-    });
+      API.get("/branches")
+        .then((result) => {
+          setBranches(result.data);
+        })
+        .catch((err) => console.log("Error: ", err));
+    }, 1000);
   };
 
   useEffect(() => {
@@ -62,7 +65,7 @@ function Branches() {
         />
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex w-full flex-col">
         {/* <div className="overflow-x-auto sm:-mx-6 lg:-mx-8"> */}
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
@@ -85,9 +88,10 @@ function Branches() {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {branches.map((branch) => (
-                    <tr className="border-b bg-neutral-100">
+                    <tr key={branch.id} className="border-b bg-neutral-100">
                       {/* <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700"> */}
                       <td className="whitespace-nowrap px-6 py-4 font-medium">
                         {branch.id}
@@ -109,6 +113,18 @@ function Branches() {
           </div>
         </div>
       </div>
+
+      {/* Loading */}
+      {branches && branches.length <= 0 ? (
+        <div className="flex w-full items-center justify-center">
+          <ReactLoading
+            type={"spokes"}
+            color={"#4d4dff"}
+            height={32}
+            width={32}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

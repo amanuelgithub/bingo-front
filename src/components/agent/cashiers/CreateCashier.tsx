@@ -176,7 +176,11 @@ function CreateCashier({ setCreateCashierFormOpen, setCashierCreated }: Props) {
             ) : null}
 
             <div className="my-2 flex w-full flex-row justify-between gap-1">
-              <Button type={"submit"} className={"w-full"}>
+              <Button
+                type={"submit"}
+                disabled={formik.isSubmitting}
+                className={"w-full"}
+              >
                 Create
               </Button>
               <Button

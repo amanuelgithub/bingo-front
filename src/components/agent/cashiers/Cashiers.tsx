@@ -5,6 +5,7 @@ import { getAuthUser } from "../../../util/localstorage";
 import Button from "../../form/Button";
 import CreateCashier from "./CreateCashier";
 import { Toaster } from "react-hot-toast";
+import ReactLoading from "react-loading";
 
 function Cashiers() {
   const [cashierCreated, setCashierCreated] = useState(false);
@@ -123,6 +124,18 @@ function Cashiers() {
           </div>
         </div>
       </div>
+
+      {/* Loading */}
+      {cashiers && cashiers.length <= 0 ? (
+        <div className="flex w-full items-center justify-center">
+          <ReactLoading
+            type={"spokes"}
+            color={"#4d4dff"}
+            height={32}
+            width={32}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

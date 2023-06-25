@@ -6,6 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { BiArrowToRight } from "react-icons/bi";
 import { IGame } from "../../models/IGame";
+import ReactLoading from "react-loading";
 
 function SellCard() {
   const [cardSold, setCardSold] = useState(false);
@@ -90,6 +91,7 @@ function SellCard() {
           console.log("sell-card: ", result.data);
           notifyCardSold();
           setCardSold(true);
+          setGamePlays([]);
         })
         .catch((err) => {
           notifyCardSellError(err);
@@ -202,6 +204,18 @@ function SellCard() {
                   </span>
                 </p>
               </div>
+
+              {/* Loading */}
+              {gamePlays && gamePlays.length <= 0 ? (
+                <div className="flex w-full items-center justify-center">
+                  <ReactLoading
+                    type={"spokes"}
+                    color={"#4d4dff"}
+                    height={32}
+                    width={32}
+                  />
+                </div>
+              ) : null}
 
               {gamePlays.map((play) => (
                 <div className="flex flex-row items-center justify-between gap-8 bg-gray-200 px-8 py-2">

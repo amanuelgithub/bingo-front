@@ -120,7 +120,11 @@ function CreateGame() {
                   </div>
                 ) : null}
 
-                <Button type={"submit"} className={"w-full"}>
+                <Button
+                  type={"submit"}
+                  disabled={formik.isSubmitting}
+                  className={"w-full"}
+                >
                   Create
                 </Button>
               </form>

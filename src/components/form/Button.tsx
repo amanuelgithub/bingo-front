@@ -5,8 +5,9 @@ interface Props {
   type?: any;
   className?: any;
   onClick?: (e: any) => void;
+  disabled?: boolean;
 }
-function Button({ type, children, className, onClick }: Props) {
+function Button({ type, children, className, onClick, disabled }: Props) {
   return (
     <button
       type={type}
@@ -14,6 +15,7 @@ function Button({ type, children, className, onClick }: Props) {
       transition-all duration-300 hover:bg-blue-500 hover:ease-in-out 
       ${className}`}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

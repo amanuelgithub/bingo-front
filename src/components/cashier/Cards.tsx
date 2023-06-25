@@ -3,6 +3,7 @@ import Button from "../form/Button";
 import { Link } from "react-router-dom";
 import API from "../../config/api";
 import { getAuthUser } from "../../util/localstorage";
+import ReactLoading from "react-loading";
 
 function Cards() {
   const [cardIdToDel, setCardIdToDel] = useState("");
@@ -33,7 +34,6 @@ function Cards() {
 
     API.get(`/cards/branch/${branchId}`)
       .then((result) => {
-        console.log("result: ", result.data);
         setCards(result.data.cards);
       })
       .catch((error) => console.log("Error: ", error));
@@ -44,6 +44,8 @@ function Cards() {
       <h1 className="py-2 text-start text-4xl font-bold text-gray-500 sm:w-full md:px-36 lg:px-48">
         All Cards
       </h1>
+
+      <hr className="w-full  text-blue-600" />
 
       <div className="sm:w-full md:px-36 lg:px-48">
         {cards &&
@@ -59,6 +61,18 @@ function Cards() {
             </div>
           ))}
       </div>
+
+      {/* Loading */}
+      {cards && cards.length <= 0 ? (
+        <div className="flex w-full items-center justify-center">
+          <ReactLoading
+            type={"spokes"}
+            color={"#4d4dff"}
+            height={32}
+            width={32}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

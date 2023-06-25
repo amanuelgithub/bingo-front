@@ -5,6 +5,7 @@ import { getAuthUser } from "../../../util/localstorage";
 import Button from "../../form/Button";
 import CreateAgent from "./CreateAgent";
 import { Toaster } from "react-hot-toast";
+import ReactLoading from "react-loading";
 
 function Agents() {
   const [agentCreated, setAgentCreated] = useState(false);
@@ -122,6 +123,18 @@ function Agents() {
           </div>
         </div>
       </div>
+
+      {/* Loading */}
+      {agents && agents.length <= 0 ? (
+        <div className="flex w-full items-center justify-center">
+          <ReactLoading
+            type={"spokes"}
+            color={"#4d4dff"}
+            height={32}
+            width={32}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

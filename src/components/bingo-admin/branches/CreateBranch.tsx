@@ -47,22 +47,34 @@ function CreateBranch({ setCreateBranchFormOpen, setBranchCreated }: Props) {
         <form onSubmit={formik.handleSubmit}>
           <div
             className={
-              "flex flex-col items-center gap-3 py-2 sm:flex-row sm:justify-center sm:gap-2 sm:px-6 lg:px-8"
+              "flex flex-col items-start gap-3 py-2 sm:flex-row sm:justify-center sm:gap-2 sm:px-6 lg:px-8"
             }
           >
             <h5 className="whitespace-nowrap text-xl font-semibold">
               Create Branch
             </h5>
-            <TextField
-              id="name"
-              type="text"
-              {...formik.getFieldProps("name")}
-              placeholder="branch name"
-              className={"h-9"}
-            />
+            <div className="w-full">
+              <TextField
+                id="name"
+                type="text"
+                {...formik.getFieldProps("name")}
+                placeholder="branch name"
+                className={"h-9"}
+              />
+
+              {formik.touched.name && formik.errors.name ? (
+                <div className="px-2 text-red-600 md:px-8">
+                  {formik.errors.name}
+                </div>
+              ) : null}
+            </div>
 
             <div className="flex w-full flex-row justify-between gap-1">
-              <Button type={"submit"} className={"w-full"}>
+              <Button
+                type={"submit"}
+                disabled={formik.isSubmitting}
+                className={"w-full"}
+              >
                 Create
               </Button>
               <Button
@@ -74,11 +86,6 @@ function CreateBranch({ setCreateBranchFormOpen, setBranchCreated }: Props) {
               </Button>
             </div>
           </div>
-          {formik.touched.name && formik.errors.name ? (
-            <div className="px-2 text-red-600 md:px-8">
-              {formik.errors.name}
-            </div>
-          ) : null}
         </form>
       )}
     </Formik>

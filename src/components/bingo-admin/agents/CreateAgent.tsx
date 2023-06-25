@@ -216,7 +216,11 @@ function CreateAgent({ setCreateAgentFormOpen, setAgentCreated }: Props) {
                 Close
               </Button>
 
-              <Button type={"submit"} className={"w-full"}>
+              <Button
+                type={"submit"}
+                disabled={formik.isSubmitting}
+                className={"w-full"}
+              >
                 Create
               </Button>
             </div>
