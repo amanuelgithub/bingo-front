@@ -20,10 +20,15 @@ import RegisterCard from "./components/agent/RegisterCard";
 import UpdateCard from "./components/agent/UpdateCard";
 import CashierWrapper from "./components/cashier/Dashboard/CashierWrapper";
 import PageNotFound from "./components/PageNotFound";
+import Game from "./components/game/Game";
+import CountDown from "./components/game/CountDown";
 
 function Router() {
   return (
     <Routes>
+      <Route path="/game" element={<Game />} />
+      <Route path="/count-down" element={<CountDown />} />
+
       <Route path="" element={<Navigate to={"/signin"} />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/view-card" element={<ViewCard />} />
