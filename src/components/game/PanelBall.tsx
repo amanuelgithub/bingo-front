@@ -3,8 +3,9 @@ import { AnimatePresence, motion } from "framer-motion";
 
 interface Props {
   children: any;
+  called: boolean;
 }
-function PanelBall({ children }: Props) {
+function PanelBall({ called, children }: Props) {
   const [hide, setHide] = useState(false);
   const [hideStart, setHideStar] = useState(false);
 
@@ -16,7 +17,7 @@ function PanelBall({ children }: Props) {
 
   return (
     <AnimatePresence>
-      {!hide && (
+      {called && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -25,7 +25,7 @@ function Game() {
       />
 
       {/* count-down timer component */}
-      {/* <CountDown /> */}
+      <CountDown />
 
       {/* left */}
       <div className="h-[100%] w-[35%]">
@@ -292,23 +292,29 @@ function Game() {
               B
             </h1>
 
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((c) => (
-              <>
-                <PanelBall>{c}</PanelBall>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(
+              (c, index) => (
+                <>
+                  <PanelBall called={index === 9 ? true : false}>{c}</PanelBall>
 
-                {/* ball */}
-                <div className="relative hidden h-[70%] w-[6%]">
-                  <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-purple-700 bg-opacity-50 text-white">
-                    <span
-                      className="font-semibold"
-                      style={{ fontSize: "1.75vw" }}
-                    >
-                      {c}
-                    </span>
+                  {/* ball */}
+                  <div
+                    className={`${
+                      index === 9 ? "hidden" : "block"
+                    } relative h-[70%] w-[6%]`}
+                  >
+                    <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-purple-700 bg-opacity-50 text-white">
+                      <span
+                        className="font-semibold"
+                        style={{ fontSize: "1.75vw" }}
+                      >
+                        {c}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </>
-            ))}
+                </>
+              )
+            )}
           </div>
 
           {/* I -> row */}

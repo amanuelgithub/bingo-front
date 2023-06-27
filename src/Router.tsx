@@ -22,11 +22,13 @@ import CashierWrapper from "./components/cashier/Dashboard/CashierWrapper";
 import PageNotFound from "./components/PageNotFound";
 import Game from "./components/game/Game";
 import CountDown from "./components/game/CountDown";
+import GameTest from "./components/game/GameTest";
 
 function Router() {
   return (
     <Routes>
       <Route path="/game" element={<Game />} />
+      <Route path="/game-test" element={<GameTest />} />
       <Route path="/count-down" element={<CountDown />} />
 
       <Route path="" element={<Navigate to={"/signin"} />} />
