@@ -1,5 +1,5 @@
 import React from "react";
-import Cell from "./ui/Cell";
+import CardCell from "./ui/CardCell";
 import Button from "./form/Button";
 
 function CheckCard() {
@@ -26,7 +26,7 @@ function CheckCard() {
     const RowComp = (
       <div className="flex w-full">
         {row.map((val, y) => (
-          <Cell
+          <CardCell
             xIndex={x}
             yIndex={y}
             xIsSize={x === row.length - 1}

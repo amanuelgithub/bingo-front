@@ -14,7 +14,7 @@ interface Props {
  * A[*,size], y-size
  *
  */
-export default function Cell({
+export default function CardCell({
   value,
   xIndex,
   yIndex,

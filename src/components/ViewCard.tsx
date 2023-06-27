@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Cell from "./ui/Cell";
+import CardCell from "./ui/CardCell";
 import Button from "./form/Button";
 import API from "../config/api";
 import { getAuthUser } from "../util/localstorage";
@@ -32,7 +32,7 @@ function ViewCard() {
     const RowComp = (
       <div className="flex w-full">
         {row.map((val, y) => (
-          <Cell
+          <CardCell
             xIndex={x}
             yIndex={y}
             xIsSize={x === row.length - 1}

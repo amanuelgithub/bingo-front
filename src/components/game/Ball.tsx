@@ -4,8 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 interface Props {
   children: any;
   called: boolean;
+  color: string; // is just an svg images location
 }
-function PanelBall({ called, children }: Props) {
+function Ball({ called, children, color }: Props) {
   const [hide, setHide] = useState(false);
   const [hideStart, setHideStar] = useState(false);
 
@@ -30,7 +31,7 @@ function PanelBall({ called, children }: Props) {
         >
           <div className="relative flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">
             <img
-              src="/images/svg/ball-image (6).svg"
+              src={color}
               alt=""
               className="absolute left-0 top-0 z-10 h-[100%] w-[100%]"
             />
@@ -94,4 +95,4 @@ function PanelBall({ called, children }: Props) {
   );
 }
 
-export default PanelBall;
+export default Ball;
