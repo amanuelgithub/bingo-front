@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import Button from "../form/Button";
 import API from "../../config/api";
-import { getActiveGame, getAuthUser } from "../../util/localstorage";
+import { getAuthUser } from "../../util/localstorage";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { BiArrowToRight } from "react-icons/bi";
 import { BsArrowUpRight } from "react-icons/bs";
 import { IGame } from "../../models/IGame";
 import ReactLoading from "react-loading";
+import GamePlayController from "./GamePlayController";
 
 function SellCard() {
   const [cardSold, setCardSold] = useState(false);
@@ -170,12 +171,8 @@ function SellCard() {
                 Money: {activeGame?.money} Birr
               </h3>
 
-              <div className="flex flex-col items-center justify-end gap-2 md:flex-row">
-                <Button className={"bg-green-500 hover:bg-green-400"}>
-                  Play
-                </Button>
-                <Button className={"bg-red-500 hover:bg-red-400"}>End</Button>
-              </div>
+              {/* play, pause, end buttons */}
+              <GamePlayController />
             </div>
 
             <div className="flex w-full flex-col gap-4 sm:mt-20 sm:flex-row sm:justify-between ">
@@ -205,7 +202,11 @@ function SellCard() {
                       ))}
                     </select>
 
-                    <Button onClick={(e) => sellCard(e)} className={"w-full"}>
+                    <Button
+                      disabled={unsoldCards.length <= 0}
+                      onClick={(e) => sellCard(e)}
+                      className={"w-full"}
+                    >
                       Sell
                     </Button>
                   </form>
