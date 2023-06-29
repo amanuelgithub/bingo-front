@@ -9,8 +9,16 @@ import { BsArrowUpRight } from "react-icons/bs";
 import { IGame } from "../../models/IGame";
 import ReactLoading from "react-loading";
 import GamePlayController from "./GamePlayController";
+import io, { Socket } from "socket.io-client";
 
 function SellCard() {
+  const [socket, setSocket] = useState<Socket>();
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:8001");
+    setSocket(newSocket);
+  }, [setSocket]);
+
   const [cardSold, setCardSold] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
@@ -20,7 +28,7 @@ function SellCard() {
   const [activeGame, setActiveGame] = useState<IGame>();
   const [activeGameExists, setActiveGameExists] = useState(false);
 
-  const { accessToken } = getAuthUser();
+  const { accessToken, cashierId } = getAuthUser();
 
   const notifyCardSold = () =>
     toast.success("Card sell success.", {
@@ -34,10 +42,10 @@ function SellCard() {
       position: "bottom-center",
     });
 
-  const fetchActiveGame = () => {
+  const fetchActiveGameOfCashier = () => {
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.get("/games/newly-created")
+    API.get(`/games/active/${cashierId}`)
       .then((res) => {
         // active game exists
         if (res.data) {
@@ -102,7 +110,7 @@ function SellCard() {
   };
 
   useEffect(() => {
-    fetchActiveGame();
+    fetchActiveGameOfCashier();
   }, []);
 
   useEffect(() => {
@@ -172,7 +180,7 @@ function SellCard() {
               </h3>
 
               {/* play, pause, end buttons */}
-              <GamePlayController />
+              <GamePlayController activeGame={activeGame} socket={socket} />
             </div>
 
             <div className="flex w-full flex-col gap-4 sm:mt-20 sm:flex-row sm:justify-between ">

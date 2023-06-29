@@ -14,3 +14,15 @@ export interface IGame {
   startTime: Date | undefined;
   endTime: Date | undefined;
 }
+
+export interface IGameData {
+  gameState: GameStateEnum;
+  currentIndex?: number;
+  playingNumbers?: number[];
+}
+
+export interface IGameSocketMessage {
+  room?: string; // gameId + cashierId
+  gameId?: string;
+  gameData: IGameData;
+}

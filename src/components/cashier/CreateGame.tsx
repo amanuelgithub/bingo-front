@@ -27,12 +27,11 @@ function CreateGame() {
       position: "bottom-center",
     });
 
-  // find if an active game exists
   useEffect(() => {
-    const { accessToken } = getAuthUser();
+    const { accessToken, cashierId } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.get("/games/newly-created")
+    API.get(`/games/active/${cashierId}`)
       .then((res) => {
         // active game exists
         console.log("active game: ", res.data);

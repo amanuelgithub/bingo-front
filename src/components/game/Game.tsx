@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CountDown from "./CountDown";
 import Last4Balls from "./Last4Balls";
 import PlayBall from "./PlayBall";
@@ -6,6 +6,11 @@ import Aesthetic4Balls from "./Aesthetic4Balls";
 import PanelCell from "./PanelCell";
 import GameBackground from "./GameBackground";
 import WaitingToStart from "./WaitingToStart";
+import { Socket, io } from "socket.io-client";
+import { GameStateEnum, IGame, IGameSocketMessage } from "../../models/IGame";
+import { motion, useAnimationControls } from "framer-motion";
+import { getAuthUser } from "../../util/localstorage";
+import API from "../../config/api";
 
 // create an object containing a number and its ball color
 interface IBall {
@@ -14,7 +19,32 @@ interface IBall {
 }
 
 function Game() {
-  const [gameState, setGameState] = useState("waiting");
+  const [socket, setSocket] = useState<Socket>();
+  const [gameSocketMessage, setGameSocketMessage] =
+    useState<IGameSocketMessage>({
+      room: "",
+      gameId: "",
+      gameData: {
+        currentIndex: 0,
+        gameState: GameStateEnum.CREATED,
+        playingNumbers: [],
+      },
+    });
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:8001");
+    setSocket(newSocket);
+
+    console.log("socket connected");
+  }, [setSocket]);
+
+  const [activeGame, setActiveGame] = useState<IGame>();
+  const [loading, setLoading] = useState(true);
+  const [gameState, setGameState] = useState<GameStateEnum>(
+    GameStateEnum.CREATED
+  );
+
+  const controls = useAnimationControls();
 
   const [balls, setBalls] = useState<IBall[]>([]);
   const [b, setB] = useState<IBall[]>([]);
@@ -22,6 +52,8 @@ function Game() {
   const [n, setN] = useState<IBall[]>([]);
   const [g, setG] = useState<IBall[]>([]);
   const [o, setO] = useState<IBall[]>([]);
+
+  const { accessToken, cashierId } = getAuthUser();
 
   const numbers = Array.from({ length: 75 }, (_, index) => index + 1);
   const ballColors = [
@@ -34,6 +66,27 @@ function Game() {
     "/images/svg/ball-image (6).svg",
     "/images/svg/ball-image (7).svg",
   ];
+
+  useEffect(() => {
+    const fetchActiveGameOfCashier = () => {
+      API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+
+      API.get(`/games/active/${cashierId}`)
+        .then((res) => {
+          if (res.data) {
+            setActiveGame(res.data);
+            console.log("game active: ", res.data);
+          }
+        })
+        .catch((err) => {
+          if (err.response?.data.statusCode === 404) {
+            console.log("error: ", err);
+          }
+        });
+    };
+
+    fetchActiveGameOfCashier();
+  }, []);
 
   // create an object of array containing a number and its ball color
   useEffect(() => {
@@ -66,20 +119,89 @@ function Game() {
     }
   }, [balls]);
 
-  if (gameState === "waiting") {
-    // return <WaitingToStart />;
+  // Loading Animation control
+  useEffect(() => {
+    controls.start((i) => ({
+      opacity: 1,
+      scale: 1,
+      transition: { delay: i * 0.3 },
+    }));
+  }, []);
+
+  const joinRoom = (value: IGameSocketMessage) => {
+    socket?.emit("joinRoom", value);
+  };
+  const messageListener = (message: IGameSocketMessage) => {
+    console.log(":msg:", message);
+    setGameSocketMessage(message);
+  };
+
+  // get info from the room
+  useEffect(() => {
+    socket?.on(`${activeGame?.id}${cashierId}`, messageListener);
+
+    return () => {
+      socket?.off(`${activeGame?.id}${cashierId}`, messageListener);
+    };
+  }, [messageListener]);
+
+  useEffect(() => {
+    console.log("Game StateReceived: ", gameState);
+  }, [gameState]);
+
+  // starting point -> joinRoom
+  useEffect(() => {
+    if (socket && activeGame?.id && cashierId) {
+      joinRoom({
+        room: `${activeGame?.id}${cashierId}`,
+        gameId: activeGame?.id + ".json",
+        gameData: {
+          ...gameSocketMessage?.gameData,
+          gameState: GameStateEnum.CREATED,
+        },
+      }); // asking to join room
+    }
+  }, [socket, activeGame, cashierId]);
+
+  useEffect(() => {
+    socket?.on("joinedRoom", messageListener);
+
+    return () => {
+      socket?.off("joinedRoom", messageListener);
+    };
+  }, [socket]);
+
+  // get info from the room
+  useEffect(() => {
+    socket?.on(`${activeGame?.id}${cashierId}`, messageListener);
+
+    return () => {
+      socket?.off(`${activeGame?.id}${cashierId}`, messageListener);
+    };
+  }, [socket]);
+
+  // when message from socket received
+  useEffect(() => {
+    if (gameSocketMessage.gameData) {
+      setGameState(gameSocketMessage.gameData.gameState);
+    }
+  }, [gameSocketMessage]);
+
+  // game is not yet started
+  if (gameState === GameStateEnum.CREATED) {
+    return <WaitingToStart />;
   }
 
   return (
     <div className="absolute left-0 top-0 flex h-screen w-screen overflow-x-hidden overflow-y-hidden">
       <GameBackground />
       {/* count-down timer component */}
-      <CountDown />
+      {!loading && <CountDown gameState={gameState} />}
 
       {/* left */}
       <div className="h-[100%] w-[35%]">
         {/* top */}
-        <Aesthetic4Balls />
+        <Aesthetic4Balls setLoading={setLoading} />
         {/* middle */}
         <PlayBall />
         {/* bottom */}
@@ -88,14 +210,21 @@ function Game() {
 
       {/* right */}
       <div className="flex h-[100%] w-[65%] flex-col items-center justify-center">
-        <div
+        <motion.div
+          initial={{ display: "hidden", opacity: 0, scale: 1.3 }}
+          animate={{ opacity: 1, scale: 1 }}
           className="flex h-[15%] w-[100%] flex-col items-center justify-end whitespace-nowrap font-extrabold uppercase text-green-500 shadow-gray-900/90 drop-shadow-lg"
           style={{ fontSize: "3.5vw" }}
         >
           Control panel
-        </div>
+        </motion.div>
 
-        <div className="flex h-[85%] w-[100%] flex-col items-center justify-start">
+        <motion.div
+          initial={{ display: "hidden", opacity: 0, scale: 1.3 }}
+          // custom={2}
+          animate={{ opacity: 1, scale: 1, transition: { delay: 0.7 } }}
+          className="flex h-[85%] w-[100%] flex-col items-center justify-start"
+        >
           {/* B -> row */}
           <div
             className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}
@@ -175,7 +304,7 @@ function Game() {
               <PanelCell ballNumber={c.number} color={c.color} />
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

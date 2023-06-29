@@ -1,8 +1,19 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 import React, { useEffect, useState } from "react";
 
 function PlayBall() {
   const [hide, setHide] = useState(false);
+
+  const controls = useAnimationControls();
+
+  // Loading Animation conrol
+  useEffect(() => {
+    controls.start((i) => ({
+      opacity: 1,
+      scale: 1,
+      transition: { delay: i * 0.3 },
+    }));
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -15,11 +26,16 @@ function PlayBall() {
   }, []);
 
   return (
-    <div className="flex h-[50%] w-[100%] items-center justify-center">
+    <motion.div
+      initial={{ display: "hidden", opacity: 0, scale: 1.3 }}
+      custom={4}
+      animate={controls}
+      className="flex h-[50%] w-[100%] items-center justify-center"
+    >
       <div className="flex h-[90%] w-[75%] items-center justify-center rounded-2xl bg-white">
         <div className="h-[65%] w-[65%]">
           {/* ball */}
-          <AnimatePresence>
+          {/* <AnimatePresence>
             {!hide && (
               <motion.div
                 initial={{ rotate: 180, scale: 0.3, opacity: 1 }}
@@ -50,10 +66,10 @@ function PlayBall() {
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

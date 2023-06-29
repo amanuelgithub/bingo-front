@@ -1,9 +1,34 @@
-import { motion } from "framer-motion";
-import React from "react";
+import { motion, useAnimationControls } from "framer-motion";
+import React, { useEffect } from "react";
 
-function Aesthetic4Balls() {
+interface Props {
+  setLoading: (value: boolean) => void;
+}
+
+function Aesthetic4Balls({ setLoading }: Props) {
+  const controls = useAnimationControls();
+
+  // Loading Animation conrol
+  useEffect(() => {
+    controls.start((i) => ({
+      opacity: 1,
+      scale: 1,
+      transition: { delay: i * 0.3 },
+    }));
+  }, []);
+
   return (
-    <div className="flex h-[25%] w-[100%] flex-col items-center justify-center">
+    <motion.div
+      initial={{ display: "hidden", opacity: 0, scale: 0.2 }}
+      custom={6}
+      animate={controls}
+      onAnimationComplete={() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }}
+      className="flex h-[25%] w-[100%] flex-col items-center justify-center"
+    >
       <div className="flex h-[55%] w-[95%] rounded-2xl">
         {/* ball */}
         <motion.div
@@ -120,7 +145,7 @@ function Aesthetic4Balls() {
       >
         Bingo
       </div>
-    </div>
+    </motion.div>
   );
 }
 

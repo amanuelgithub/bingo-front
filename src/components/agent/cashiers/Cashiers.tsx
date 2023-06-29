@@ -13,12 +13,13 @@ function Cashiers() {
   const [cashiers, setCashiers] = useState<any[]>([]);
 
   const fetchCashiers = () => {
-    const { accessToken } = getAuthUser();
+    const { accessToken, branchId } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.get("/cashiers")
+    API.get(`/cashiers/branches/${branchId}`)
       .then((result) => {
         setCashiers(result.data);
+        console.log("cashiers:  ", result.data);
       })
       .catch((err) => console.log("Error: ", err));
   };
@@ -89,6 +90,9 @@ function Cashiers() {
                       Phone
                     </th>
                     <th scope="col" className="px-6 py-4">
+                      Branch
+                    </th>
+                    <th scope="col" className="px-6 py-4">
                       Status
                     </th>
                   </tr>
@@ -112,6 +116,9 @@ function Cashiers() {
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
                           {branch.user.phone}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4">
+                          {branch.branch.name}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
                           {branch.user.status}

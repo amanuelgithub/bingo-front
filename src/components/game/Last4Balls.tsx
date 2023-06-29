@@ -1,8 +1,13 @@
+import { motion } from "framer-motion";
 import React from "react";
 
 function Last4Balls() {
   return (
-    <div className="flex h-[25%] w-[100%] flex-col items-center justify-center gap-[3%]">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 1.5 } }}
+      className="flex h-[25%] w-[100%] flex-col items-center justify-center gap-[3%]"
+    >
       <div
         className="h-[20%] w-[75%] text-center font-extrabold uppercase text-green-600 shadow-gray-900/90 drop-shadow-lg"
         style={{ fontSize: "4vh" }}
@@ -79,7 +84,7 @@ function Last4Balls() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

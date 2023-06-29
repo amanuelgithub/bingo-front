@@ -1,17 +1,55 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GameStateEnum } from "../../models/IGame";
 
-function CountDown() {
+interface Props {
+  gameState: GameStateEnum;
+}
+
+function CountDown({ gameState }: Props) {
   const [count, setCount] = useState(15);
   const [hiddenWeStartIn, setHiddenWeStartIn] = useState(false);
   const [hiddenGoodLuck, setHiddenGoodLuck] = useState(true);
 
-  const [countDownStarted, setCountDownStarted] = useState(false);
+  const [countDowning, setCountDowning] = useState(false);
   const [closeCountDownWindow, setCloseCountDownWindow] = useState(false);
+
+  const [firstTimePlayClicked, setFirstTimePlayClicked] = useState(true);
+
+  useEffect(() => {
+    let delayCountDownTimer: any;
+
+    switch (gameState) {
+      case GameStateEnum.PLAYING: {
+        if (firstTimePlayClicked) {
+          delayCountDownTimer = setTimeout(() => {
+            setCountDowning(true);
+            setFirstTimePlayClicked(false);
+          }, 2000);
+        } else {
+          setCountDowning(true);
+        }
+
+        break;
+      }
+      case GameStateEnum.PAUSED: {
+        setCountDowning(false);
+        break;
+      }
+      default: {
+        setCountDowning(true);
+        break;
+      }
+    }
+
+    return () => {
+      clearTimeout(delayCountDownTimer);
+    };
+  }, [gameState]);
 
   useEffect(() => {
     const countDownTimer = setTimeout(() => {
-      if (countDownStarted) {
+      if (countDowning) {
         setCount((prev) => {
           return prev - 1;
         });
@@ -19,10 +57,6 @@ function CountDown() {
         if (count === 0) setCount(0);
       }
     }, 1000);
-
-    const delayCountDownTimer = setTimeout(() => {
-      setCountDownStarted(true);
-    }, 2000);
 
     if (count !== 0) {
       setHiddenWeStartIn(false);
@@ -36,9 +70,8 @@ function CountDown() {
 
     return () => {
       clearTimeout(countDownTimer);
-      clearTimeout(delayCountDownTimer);
     };
-  }, [count, countDownStarted]);
+  }, [count, countDowning]);
 
   return (
     <div
@@ -105,6 +138,7 @@ function CountDown() {
               // x: -100,
               transition: { duration: 0.1, type: "tween" },
             }}
+            onAnimationComplete={() => {}}
             transition={{ delay: 1, duration: 0.3, type: "spring" }}
             className="relative flex h-[25%] w-[15%] flex-row items-center justify-center rounded-2xl bg-purple-600 px-[2%] py-[2%]  font-extrabold"
           >
@@ -113,12 +147,16 @@ function CountDown() {
                 {count === n && (
                   <motion.h1
                     initial={{ scale: 0.3, opacity: 0 }}
-                    animate={countDownStarted ? { scale: 1, opacity: 1 } : {}}
-                    exit={{
-                      scale: 0.6,
-                      opacity: 0,
-                      transition: { duration: 0.5, type: "spring" },
-                    }}
+                    animate={countDowning ? { scale: 1, opacity: 1 } : {}}
+                    exit={
+                      countDowning
+                        ? {
+                            scale: 0.6,
+                            opacity: 0,
+                            transition: { duration: 0.5, type: "spring" },
+                          }
+                        : {}
+                    }
                     transition={{
                       duration: 0.5,
                       delay: 0.4,
@@ -127,7 +165,7 @@ function CountDown() {
                     }}
                     className={`absolute left-0 top-0 flex h-[100%] w-[100%] items-center justify-center text-center text-white ${
                       //   className={`absolute -left-[12%] -top-[35%] flex h-[100%] w-[100%] items-center justify-center text-center text-white ${
-                      count !== n || !countDownStarted ? "hidden" : "block"
+                      count !== n || !countDowning ? "hidden" : "block"
                     }`}
                     style={{ fontSize: "10vw" }}
                   >
