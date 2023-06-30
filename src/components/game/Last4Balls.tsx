@@ -1,7 +1,21 @@
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect } from "react";
+import { IBall } from "../../models/IBall";
 
-function Last4Balls() {
+interface Props {
+  last4BallsIndex: (number | undefined)[];
+  balls: IBall[];
+}
+
+function Last4Balls({ last4BallsIndex, balls }: Props) {
+  useEffect(() => {
+    // console.log("last 4 balls: ", last4BallsIndex);
+  }, [last4BallsIndex]);
+
+  useEffect(() => {
+    console.log("balls: ", balls);
+  }, [balls]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -17,72 +31,32 @@ function Last4Balls() {
 
       <div className="flex h-[40%] w-[75%] flex-row items-start justify-start rounded-2xl bg-white px-[2%] py-[2%]">
         {/* ball */}
-        <div className="relative h-[100%] w-[100%]">
-          <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">
-            <img
-              src="/images/svg/ball-image (2).svg"
-              alt=""
-              className="absolute left-0 top-0 z-10 h-[100%] w-[100%]"
-            />
-            <span
-              className="z-20 font-bold text-gray-700"
-              style={{ fontSize: "1.7vw" }}
-            >
-              55
-            </span>
-          </div>
-        </div>
-
-        {/* ball */}
-        <div className="relative h-[100%] w-[100%]">
-          <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">
-            <img
-              src="/images/svg/ball-image (3).svg"
-              alt=""
-              className="absolute left-0 top-0 z-10 h-[100%] w-[100%]"
-            />
-            <span
-              className="z-20 font-bold text-gray-700"
-              style={{ fontSize: "1.7vw" }}
-            >
-              55
-            </span>
-          </div>
-        </div>
-
-        {/* ball */}
-        <div className="relative h-[100%] w-[100%]">
-          <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">
-            <img
-              src="/images/svg/ball-image (4).svg"
-              alt=""
-              className="absolute left-0 top-0 z-10 h-[100%] w-[100%]"
-            />
-            <span
-              className="z-20 font-bold text-gray-700"
-              style={{ fontSize: "1.7vw" }}
-            >
-              55
-            </span>
-          </div>
-        </div>
-
-        {/* ball */}
-        <div className="relative h-[100%] w-[100%]">
-          <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">
-            <img
-              src="/images/svg/ball-image (5).svg"
-              alt=""
-              className="absolute left-0 top-0 z-10 h-[100%] w-[100%]"
-            />
-            <span
-              className="z-20 font-bold text-gray-700"
-              style={{ fontSize: "1.7vw" }}
-            >
-              55
-            </span>
-          </div>
-        </div>
+        {last4BallsIndex &&
+          last4BallsIndex
+            .slice()
+            .reverse()
+            .map((val) => (
+              <motion.div
+                initial={{ x: 0 }}
+                animate={{ x: 2, transition: { repeat: Infinity } }}
+                key={val}
+                className="relative h-[100%] w-[25%]"
+              >
+                <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">
+                  <img
+                    src={balls[(val ?? 0) - 1].color}
+                    alt=""
+                    className="absolute left-0 top-0 z-10 h-[100%] w-[100%]"
+                  />
+                  <span
+                    className="z-20 font-bold text-gray-700"
+                    style={{ fontSize: "1.7vw" }}
+                  >
+                    {balls[(val ?? 0) - 1].number}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
       </div>
     </motion.div>
   );

@@ -30,9 +30,13 @@ export function storeAuthUser(authUser: IAuthUser) {
 
 /** returns authenticated user data from - localstorage */
 export function getAuthUser(): IAuthUser {
-  return JSON.parse(
-    window.localStorage.getItem(AUTH_USER_STORE_NAME) ?? ""
-  ) as IAuthUser;
+  if (localStorage.getItem(AUTH_USER_STORE_NAME)) {
+    return JSON.parse(
+      localStorage.getItem(AUTH_USER_STORE_NAME) ?? ""
+    ) as IAuthUser;
+  }
+
+  return {} as IAuthUser;
 }
 
 /** stores active game data to - localstorage */
@@ -45,7 +49,11 @@ export function storeActiveGame(activeGame: IGame) {
 
 /** returns active game data from - localstorage */
 export function getActiveGame(): IGame {
-  return JSON.parse(
-    window.localStorage.getItem(ACTIVE_GAME_STORE_NAME) ?? ""
-  ) as IGame;
+  if (localStorage.getItem(ACTIVE_GAME_STORE_NAME)) {
+    return JSON.parse(
+      localStorage.getItem(ACTIVE_GAME_STORE_NAME) ?? ""
+    ) as IGame;
+  }
+
+  return {} as IGame;
 }

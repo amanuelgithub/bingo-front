@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Ball from "./Ball";
 import Cell from "./Cell";
 
@@ -6,20 +6,29 @@ interface Props {
   index?: number;
   ballNumber: number;
   color: string; // is just an svg images location
+  isInCalled: boolean; // checks if it is in called array
 }
 
-function PanelCell({ ballNumber, color, index }: Props) {
+function PanelCell({ ballNumber, isInCalled, color, index }: Props) {
   return (
     <>
       {index !== undefined && (
         // animated ball
-        <Ball called={index === 9 ? true : false} color={color}>
+        <Ball
+          called={index === ballNumber ? true : false}
+          color={color}
+          isInCalled={isInCalled}
+        >
           {ballNumber}
         </Ball>
       )}
 
       {/* cell */}
-      <Cell ballNumber={ballNumber} />
+      <Cell
+        called={(index ?? 0) !== ballNumber ? true : false}
+        isInCalled={isInCalled}
+        ballNumber={ballNumber}
+      />
     </>
   );
 }

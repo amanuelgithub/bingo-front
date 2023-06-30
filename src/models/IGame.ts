@@ -17,8 +17,8 @@ export interface IGame {
 
 export interface IGameData {
   gameState: GameStateEnum;
-  currentIndex?: number;
-  playingNumbers?: number[];
+  currentIndex: number;
+  playingNumbers: number[];
 }
 
 export interface IGameSocketMessage {

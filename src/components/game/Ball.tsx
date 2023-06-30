@@ -5,27 +5,27 @@ interface Props {
   children: any;
   called: boolean;
   color: string; // is just an svg images location
+  isInCalled: boolean; // checks if it is in called array
 }
-function Ball({ called, children, color }: Props) {
-  const [hide, setHide] = useState(false);
+function Ball({ called, isInCalled, children, color }: Props) {
   const [hideStart, setHideStar] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
       setHideStar(true);
-    }, 1000);
-  }, []);
+    }, 2000);
+
+    return () => {
+      setHideStar(false);
+    };
+  }, [called]);
 
   return (
-    <AnimatePresence>
-      {called && (
+    <>
+      {(called || isInCalled) && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{
-            scale: 0,
-            transition: { type: "just" },
-          }}
           transition={{ duration: 0.9, type: "spring" }}
           className={`relative h-[70%] w-[6%]`}
         >
@@ -91,7 +91,7 @@ function Ball({ called, children, color }: Props) {
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
 

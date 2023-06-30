@@ -11,14 +11,30 @@ import { GameStateEnum, IGame, IGameSocketMessage } from "../../models/IGame";
 import { motion, useAnimationControls } from "framer-motion";
 import { getAuthUser } from "../../util/localstorage";
 import API from "../../config/api";
+import { IBall } from "../../models/IBall";
+import FailedToConnect from "../FailedToConnect";
 
 // create an object containing a number and its ball color
-interface IBall {
-  number: number;
-  color: string;
-}
 
 function Game() {
+  const [activeGame, setActiveGame] = useState<IGame>();
+  const [loading, setLoading] = useState(true);
+  const [gameState, setGameState] = useState<GameStateEnum>(
+    GameStateEnum.CREATED
+  );
+
+  const [calledBallsIndex, setCalledBallsIndex] = useState<
+    (number | undefined)[]
+  >([]);
+  const [last4CalledBalls, setLast4CalledBalls] = useState<
+    (number | undefined)[]
+  >([]);
+
+  // current playing number index = playingNumbers[currentIndex]
+  const [currentPlayingIndex, setCurrentPlayingIndex] = useState<
+    number | undefined
+  >();
+
   const [socket, setSocket] = useState<Socket>();
   const [gameSocketMessage, setGameSocketMessage] =
     useState<IGameSocketMessage>({
@@ -31,20 +47,7 @@ function Game() {
       },
     });
 
-  useEffect(() => {
-    const newSocket = io("http://localhost:8001");
-    setSocket(newSocket);
-
-    console.log("socket connected");
-  }, [setSocket]);
-
-  const [activeGame, setActiveGame] = useState<IGame>();
-  const [loading, setLoading] = useState(true);
-  const [gameState, setGameState] = useState<GameStateEnum>(
-    GameStateEnum.CREATED
-  );
-
-  const controls = useAnimationControls();
+  const [count, setCount] = useState(15);
 
   const [balls, setBalls] = useState<IBall[]>([]);
   const [b, setB] = useState<IBall[]>([]);
@@ -52,6 +55,18 @@ function Game() {
   const [n, setN] = useState<IBall[]>([]);
   const [g, setG] = useState<IBall[]>([]);
   const [o, setO] = useState<IBall[]>([]);
+
+  const handleCount = (val: number) => setCount(val);
+
+  // setup socket connection
+  useEffect(() => {
+    const newSocket = io("http://localhost:8001");
+    setSocket(newSocket);
+
+    // console.log("socket connected");
+  }, [setSocket]);
+
+  const controls = useAnimationControls();
 
   const { accessToken, cashierId } = getAuthUser();
 
@@ -67,6 +82,7 @@ function Game() {
     "/images/svg/ball-image (7).svg",
   ];
 
+  // gets an active game of by cashier
   useEffect(() => {
     const fetchActiveGameOfCashier = () => {
       API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
@@ -75,7 +91,6 @@ function Game() {
         .then((res) => {
           if (res.data) {
             setActiveGame(res.data);
-            console.log("game active: ", res.data);
           }
         })
         .catch((err) => {
@@ -131,8 +146,12 @@ function Game() {
   const joinRoom = (value: IGameSocketMessage) => {
     socket?.emit("joinRoom", value);
   };
+  const sendMessageOnRoom = (value: IGameSocketMessage) => {
+    socket?.emit("joinRoom", value);
+    // console.log("send msg: ", value);
+  };
   const messageListener = (message: IGameSocketMessage) => {
-    console.log(":msg:", message);
+    // console.log(":msg:", message);
     setGameSocketMessage(message);
   };
 
@@ -144,10 +163,6 @@ function Game() {
       socket?.off(`${activeGame?.id}${cashierId}`, messageListener);
     };
   }, [messageListener]);
-
-  useEffect(() => {
-    console.log("Game StateReceived: ", gameState);
-  }, [gameState]);
 
   // starting point -> joinRoom
   useEffect(() => {
@@ -163,6 +178,7 @@ function Game() {
     }
   }, [socket, activeGame, cashierId]);
 
+  // listens to 'joinedRoom'
   useEffect(() => {
     socket?.on("joinedRoom", messageListener);
 
@@ -171,7 +187,7 @@ function Game() {
     };
   }, [socket]);
 
-  // get info from the room
+  // listens to get info of the gameSocketMessage
   useEffect(() => {
     socket?.on(`${activeGame?.id}${cashierId}`, messageListener);
 
@@ -180,12 +196,91 @@ function Game() {
     };
   }, [socket]);
 
-  // when message from socket received
+  // set the separate gameState from gameSocketMessage
   useEffect(() => {
     if (gameSocketMessage.gameData) {
-      setGameState(gameSocketMessage.gameData.gameState);
+      setGameState(gameSocketMessage.gameData?.gameState);
     }
   }, [gameSocketMessage]);
+
+  // main game play control
+  useEffect(() => {
+    let gamePlayCallInterval: any;
+
+    if (count === 0 && gameSocketMessage.gameData?.currentIndex > 75) {
+      // game should be ended
+      sendMessageOnRoom({
+        ...gameSocketMessage,
+        gameData: {
+          ...gameSocketMessage.gameData,
+          gameState: GameStateEnum.END,
+        },
+      });
+    } else if (
+      count === 0 &&
+      gameSocketMessage &&
+      gameSocketMessage.gameData?.currentIndex < 75 &&
+      gameState === GameStateEnum.PLAYING
+    ) {
+      //
+      gamePlayCallInterval = setInterval(() => {
+        setGameSocketMessage({
+          ...gameSocketMessage,
+          gameData: {
+            ...gameSocketMessage.gameData,
+            currentIndex: gameSocketMessage.gameData.currentIndex,
+          },
+        });
+
+        sendMessageOnRoom({
+          ...gameSocketMessage,
+          gameData: {
+            ...gameSocketMessage.gameData,
+            currentIndex: gameSocketMessage.gameData.currentIndex + 1,
+          },
+        });
+
+        // increase the currentPlayingIndex
+        if (gameSocketMessage.gameData) {
+          setCurrentPlayingIndex(
+            gameSocketMessage.gameData?.playingNumbers[
+              gameSocketMessage.gameData?.currentIndex
+            ]
+          );
+        }
+      }, 4500);
+    }
+
+    return () => {
+      clearInterval(gamePlayCallInterval);
+    };
+  }, [count, gameSocketMessage, gameState]);
+
+  useEffect(() => {
+    console.log("called balls index: ", calledBallsIndex);
+
+    if (calledBallsIndex.length < 4) {
+      setLast4CalledBalls(calledBallsIndex.slice());
+    } else {
+      setLast4CalledBalls(
+        calledBallsIndex.slice(
+          calledBallsIndex.length - 4,
+          calledBallsIndex.length
+        )
+      );
+    }
+  }, [calledBallsIndex]);
+
+  useEffect(() => {
+    // console.log("currentPlayingIndex", currentPlayingIndex);
+    if (currentPlayingIndex) {
+      setCalledBallsIndex((prevVal) => [...prevVal, currentPlayingIndex]); //
+    }
+  }, [currentPlayingIndex]);
+
+  if (!accessToken || !cashierId) {
+    return <FailedToConnect />;
+  }
 
   // game is not yet started
   if (gameState === GameStateEnum.CREATED) {
@@ -196,16 +291,29 @@ function Game() {
     <div className="absolute left-0 top-0 flex h-screen w-screen overflow-x-hidden overflow-y-hidden">
       <GameBackground />
       {/* count-down timer component */}
-      {!loading && <CountDown gameState={gameState} />}
+      {!loading && (
+        <CountDown
+          gameState={gameState}
+          count={count}
+          handleCount={handleCount}
+        />
+      )}
 
       {/* left */}
       <div className="h-[100%] w-[35%]">
         {/* top */}
         <Aesthetic4Balls setLoading={setLoading} />
         {/* middle */}
-        <PlayBall />
+        <PlayBall
+          ball={
+            gameSocketMessage &&
+            currentPlayingIndex &&
+            balls[currentPlayingIndex - 1]
+          }
+          gameState={gameState}
+        />
         {/* bottom */}
-        <Last4Balls />
+        <Last4Balls last4BallsIndex={last4CalledBalls} balls={balls} />
       </div>
 
       {/* right */}
@@ -237,7 +345,12 @@ function Game() {
             </h1>
 
             {b.map((c, index) => (
-              <PanelCell index={index} ballNumber={c.number} color={c.color} />
+              <PanelCell
+                index={currentPlayingIndex}
+                ballNumber={c.number}
+                isInCalled={calledBallsIndex.includes(c.number)}
+                color={c.color}
+              />
             ))}
           </div>
 
@@ -253,7 +366,12 @@ function Game() {
             </h1>
 
             {i.map((c) => (
-              <PanelCell ballNumber={c.number} color={c.color} />
+              <PanelCell
+                index={currentPlayingIndex}
+                ballNumber={c.number}
+                isInCalled={calledBallsIndex.includes(c.number)}
+                color={c.color}
+              />
             ))}
           </div>
 
@@ -269,7 +387,12 @@ function Game() {
             </h1>
 
             {n.map((c) => (
-              <PanelCell ballNumber={c.number} color={c.color} />
+              <PanelCell
+                index={currentPlayingIndex}
+                ballNumber={c.number}
+                isInCalled={calledBallsIndex.includes(c.number)}
+                color={c.color}
+              />
             ))}
           </div>
 
@@ -285,7 +408,12 @@ function Game() {
             </h1>
 
             {g.map((c) => (
-              <PanelCell ballNumber={c.number} color={c.color} />
+              <PanelCell
+                index={currentPlayingIndex}
+                ballNumber={c.number}
+                isInCalled={calledBallsIndex.includes(c.number)}
+                color={c.color}
+              />
             ))}
           </div>
 
@@ -301,7 +429,12 @@ function Game() {
             </h1>
 
             {o.map((c) => (
-              <PanelCell ballNumber={c.number} color={c.color} />
+              <PanelCell
+                index={currentPlayingIndex}
+                ballNumber={c.number}
+                isInCalled={calledBallsIndex.includes(c.number)}
+                color={c.color}
+              />
             ))}
           </div>
         </motion.div>

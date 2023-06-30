@@ -4,10 +4,11 @@ import { GameStateEnum } from "../../models/IGame";
 
 interface Props {
   gameState: GameStateEnum;
+  count: number;
+  handleCount: (val: number) => void;
 }
 
-function CountDown({ gameState }: Props) {
-  const [count, setCount] = useState(15);
+function CountDown({ count, handleCount, gameState }: Props) {
   const [hiddenWeStartIn, setHiddenWeStartIn] = useState(false);
   const [hiddenGoodLuck, setHiddenGoodLuck] = useState(true);
 
@@ -48,13 +49,13 @@ function CountDown({ gameState }: Props) {
   }, [gameState]);
 
   useEffect(() => {
+    console.log("count: ", count);
+
     const countDownTimer = setTimeout(() => {
       if (countDowning) {
-        setCount((prev) => {
-          return prev - 1;
-        });
+        handleCount(count - 1);
 
-        if (count === 0) setCount(0);
+        if (count === 0) handleCount(0);
       }
     }, 1000);
 
@@ -143,37 +144,47 @@ function CountDown({ gameState }: Props) {
             className="relative flex h-[25%] w-[15%] flex-row items-center justify-center rounded-2xl bg-purple-600 px-[2%] py-[2%]  font-extrabold"
           >
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((n) => (
-              <AnimatePresence>
-                {count === n && (
-                  <motion.h1
-                    initial={{ scale: 0.3, opacity: 0 }}
-                    animate={countDowning ? { scale: 1, opacity: 1 } : {}}
-                    exit={
-                      countDowning
-                        ? {
-                            scale: 0.6,
-                            opacity: 0,
-                            transition: { duration: 0.5, type: "spring" },
-                          }
-                        : {}
-                    }
-                    transition={{
-                      duration: 0.5,
-                      delay: 0.4,
-                      type: "spring",
-                      bounce: 0.5,
-                    }}
-                    className={`absolute left-0 top-0 flex h-[100%] w-[100%] items-center justify-center text-center text-white ${
-                      //   className={`absolute -left-[12%] -top-[35%] flex h-[100%] w-[100%] items-center justify-center text-center text-white ${
-                      count !== n || !countDowning ? "hidden" : "block"
-                    }`}
-                    style={{ fontSize: "10vw" }}
-                  >
-                    {n}
-                  </motion.h1>
-                )}
-              </AnimatePresence>
+              <>
+                <AnimatePresence>
+                  {count === n && (
+                    <motion.h1
+                      initial={{ scale: 0.3, opacity: 0 }}
+                      animate={countDowning ? { scale: 1, opacity: 1 } : {}}
+                      exit={
+                        countDowning
+                          ? {
+                              scale: 0.6,
+                              opacity: 0,
+                              transition: { duration: 0.5, type: "spring" },
+                            }
+                          : {}
+                      }
+                      transition={{
+                        duration: 0.5,
+                        delay: 0.4,
+                        type: "spring",
+                        bounce: 0.5,
+                      }}
+                      className={`absolute left-0 top-0 flex h-[100%] w-[100%] items-center justify-center text-center text-white ${
+                        count !== n || !countDowning ? "hidden" : "block"
+                      }`}
+                      style={{ fontSize: "10vw" }}
+                    >
+                      {n}
+                    </motion.h1>
+                  )}
+                </AnimatePresence>
+              </>
             ))}
+
+            {!countDowning && (
+              <motion.h1
+                initial={{ scale: 4 }}
+                className={`absolute left-0 top-0 flex h-[100%] w-[100%] items-center justify-center text-center text-[100%] text-white`}
+              >
+                {count}
+              </motion.h1>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -182,3 +193,5 @@ function CountDown({ gameState }: Props) {
 }
 
 export default CountDown;
+// className={`absolute -left-[12%] -top-[35%] flex h-[100%] w-[100%] items-center justify-center text-center text-white
+// count !== n || !countDowning ? "hidden" : "block"
