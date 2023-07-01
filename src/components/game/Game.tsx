@@ -207,7 +207,13 @@ function Game() {
   useEffect(() => {
     let gamePlayCallInterval: any;
 
-    if (count === 0 && gameSocketMessage.gameData?.currentIndex > 75) {
+    // do something if the game is ended
+    if (
+      gameSocketMessage.gameData?.gameState === GameStateEnum.END &&
+      gameState === GameStateEnum.END
+    ) {
+      // todo: handle game ended state
+    } else if (count === 0 && gameSocketMessage.gameData?.currentIndex >= 75) {
       // game should be ended
       sendMessageOnRoom({
         ...gameSocketMessage,
@@ -257,8 +263,6 @@ function Game() {
   }, [count, gameSocketMessage, gameState]);
 
   useEffect(() => {
-    console.log("called balls index: ", calledBallsIndex);
-
     if (calledBallsIndex.length < 4) {
       setLast4CalledBalls(calledBallsIndex.slice());
     } else {
@@ -271,12 +275,16 @@ function Game() {
     }
   }, [calledBallsIndex]);
 
+  // appends called ball index when currentPlayingIndex changes
   useEffect(() => {
-    // console.log("currentPlayingIndex", currentPlayingIndex);
     if (currentPlayingIndex) {
       setCalledBallsIndex((prevVal) => [...prevVal, currentPlayingIndex]); //
     }
   }, [currentPlayingIndex]);
+
+  if (gameState === GameStateEnum.END) {
+    return <div>show game ended page</div>;
+  }
 
   if (!accessToken || !cashierId) {
     return <FailedToConnect />;

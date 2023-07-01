@@ -40,14 +40,14 @@ function Cards() {
   }, [cardIdToDel]);
 
   return (
-    <div className="flex w-full flex-col items-start justify-center gap-1 bg-gray-100">
-      <h1 className="py-2 text-start text-4xl font-bold text-gray-500 sm:w-full md:px-36 lg:px-48">
+    <div className="flex w-full flex-col items-start justify-center gap-1 bg-gray-100 px-2 sm:px-4 ">
+      <h1 className="py-2 text-start text-4xl font-bold text-gray-500">
         All Cards
       </h1>
 
       <hr className="w-full  text-blue-600" />
 
-      <div className="sm:w-full md:px-36 lg:px-48">
+      <div className="flex w-full flex-col items-center justify-center">
         {cards &&
           cards.map((card) => (
             <div className="my-1 flex flex-row items-center justify-between gap-8 bg-gray-200 px-8 py-2 sm:w-full">
