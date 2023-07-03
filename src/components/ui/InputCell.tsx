@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { BsStarFill } from "react-icons/bs";
 
 interface Props {
   xIndex: number;
@@ -37,7 +38,7 @@ function InputCell({
      ${yIndex === 0 ? "border-l-0" : ""}
      ${xIsSize ? "border-b-0" : ""}
      ${yIsSize ? "border-r-0" : ""}
-       
+       relative
       flex h-14 w-14 items-center justify-center rounded-md border-[0.5px] border-gray-700 bg-yellow-500 text-lg 
        font-semibold sm:h-24 sm:w-24 sm:text-3xl`}
     >
@@ -51,9 +52,12 @@ function InputCell({
             : "drop-shadow-none"
         }
         `}
-        value={xIndex === 2 && yIndex === 2 ? "BINGO" : value}
+        value={xIndex === 2 && yIndex === 2 ? "" : value}
         onChange={handleValueChange}
       />
+      {xIndex === 2 && yIndex === 2 ? (
+        <BsStarFill className="absolute left-0 top-0 h-full w-full bg-gradient-to-tr from-red-500 via-orange-500 to-indigo-500 text-teal-400" />
+      ) : null}
     </div>
   );
 }

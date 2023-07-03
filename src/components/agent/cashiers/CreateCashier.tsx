@@ -20,6 +20,7 @@ const initialValues = {
   email: "",
   status: "",
   password: "",
+  branchId: "",
 };
 
 const validationSchema = yup.object({
@@ -44,19 +45,24 @@ const validationSchema = yup.object({
       [UserStatusEnum.ACTIVE, UserStatusEnum.INACTIVE],
       "Status must be either ACTIVE or INACTIVE"
     ),
+  branchId: yup.string().required("BranchId is required"),
 });
 
 function CreateCashier({ setCreateCashierFormOpen, setCashierCreated }: Props) {
+  const [branches, setBranches] = useState([
+    { id: "", name: "", createdAt: "", modifiedAt: "" },
+  ]);
+
   const notifyCashierCreated = () =>
     toast.success("Cashier creation success.", {
       duration: 3000,
-      position: "bottom-center",
+      position: "top-right",
     });
 
   const notifyCashierCreationError = (err: string) =>
     toast.error(`Cashier creation error. \n ${err}`, {
       duration: 3000,
-      position: "bottom-center",
+      position: "top-right",
     });
 
   const handleCreateBranch = (values: any) => {
@@ -66,7 +72,6 @@ function CreateCashier({ setCreateCashierFormOpen, setCashierCreated }: Props) {
     API.post("/cashiers", {
       ...values,
       role: UserRoleEnum.CASHIER,
-      branchId: branchId,
     })
       .then(() => {
         notifyCashierCreated();
@@ -76,6 +81,16 @@ function CreateCashier({ setCreateCashierFormOpen, setCashierCreated }: Props) {
         notifyCashierCreationError(err.response.data.message);
       });
   };
+
+  // get list of branches
+  useEffect(() => {
+    const { accessToken, agentId } = getAuthUser();
+    API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+
+    API.get(`/branches/${agentId}`).then((result) => {
+      setBranches(result.data);
+    });
+  }, []);
 
   return (
     <Formik
@@ -127,20 +142,6 @@ function CreateCashier({ setCreateCashierFormOpen, setCashierCreated }: Props) {
 
             <div className="my-2 flex flex-col gap-4 sm:flex-row">
               <div className="w-full">
-                <TextField
-                  id="email"
-                  type="email"
-                  {...formik.getFieldProps("email")}
-                  placeholder="Email"
-                />
-                {formik.touched.email && formik.errors.email ? (
-                  <div className="px-2 text-xs text-red-600 md:px-8">
-                    {formik.errors.email}
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="w-full">
                 {/* Status */}
                 <Field
                   id="status"
@@ -159,6 +160,45 @@ function CreateCashier({ setCreateCashierFormOpen, setCashierCreated }: Props) {
                   </div>
                 ) : null}
               </div>
+
+              <div className="w-full">
+                {/* BranchId */}
+                <Field
+                  id="branchId"
+                  name="branchId"
+                  as="select"
+                  className="w-full border-2 border-black py-2"
+                >
+                  {branches && (
+                    <>
+                      <option value="">select branch</option>
+                      {branches.map((branch) => (
+                        <option value={branch.id}>{branch.name}</option>
+                      ))}
+                    </>
+                  )}
+                </Field>
+
+                {formik.touched.branchId && formik.errors.branchId ? (
+                  <div className="px-2 text-xs text-red-600 md:px-8">
+                    {formik.errors.branchId}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="w-full">
+              <TextField
+                id="email"
+                type="email"
+                {...formik.getFieldProps("email")}
+                placeholder="Email"
+              />
+              {formik.touched.email && formik.errors.email ? (
+                <div className="px-2 text-xs text-red-600 md:px-8">
+                  {formik.errors.email}
+                </div>
+              ) : null}
             </div>
 
             {/* password */}

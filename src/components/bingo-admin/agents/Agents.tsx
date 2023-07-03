@@ -6,11 +6,14 @@ import Button from "../../form/Button";
 import CreateAgent from "./CreateAgent";
 import { Toaster } from "react-hot-toast";
 import ReactLoading from "react-loading";
+import { Link, useNavigate } from "react-router-dom";
 
 function Agents() {
   const [agentCreated, setAgentCreated] = useState(false);
   const [createAgentFormOpen, setCreateAgentFormOpen] = useState(false);
   const [agents, setAgents] = useState<any[]>([]);
+
+  const navigate = useNavigate();
 
   const fetchAgents = () => {
     const { accessToken } = getAuthUser();
@@ -90,30 +93,41 @@ function Agents() {
                     <th scope="col" className="px-6 py-4">
                       Status
                     </th>
+                    <th scope="col" className="px-6 py-4"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {agents &&
-                    agents.map((branch) => (
-                      <tr className="border-b bg-neutral-100">
+                    agents.map((agent, index) => (
+                      <tr className="border-b bg-neutral-100" key={agent.id}>
                         {/* <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700"> */}
                         <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          {branch.userId}
+                          {index + 1}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.username}
+                          {agent.user.username}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.role}
+                          {agent.user.role}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.email}
+                          {agent.user.email}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.phone}
+                          {agent.user.phone}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.status}
+                          {agent.user.status}
+                        </td>
+                        <td
+                          onClick={() =>
+                            navigate("/admin-dashboard/agent-detail", {
+                              state: { agentId: agent.id },
+                            })
+                          }
+                          className="whitespace-nowrap px-6 py-4 text-sm text-green-600 underline hover:cursor-pointer"
+                        >
+                          view detail
                         </td>
                       </tr>
                     ))}

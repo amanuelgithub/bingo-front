@@ -1,26 +1,28 @@
-import { FaBuilding, FaCashRegister } from "react-icons/fa";
-// import { IoAdd } from "react-icons/io5";
+import { FaBuilding } from "react-icons/fa";
 import { GoOrganization } from "react-icons/go";
+import { BiDetail } from "react-icons/bi";
+import { RiDashboardLine } from "react-icons/ri";
 
 export const sidebarItems = [
+  {
+    text: "Dashboard",
+    icon: <RiDashboardLine />,
+    to: "/admin-dashboard",
+  },
   {
     text: "Branches",
     icon: <FaBuilding />,
     to: "/admin-dashboard/branches",
   },
-  // {
-  //   text: "Create Branch",
-  //   icon: <IoAdd />,
-  //   to: "/admin-dashboard/create-branch",
-  // },
+
   {
     text: "Agents",
     icon: <GoOrganization />,
     to: "/admin-dashboard/agents",
   },
-  // {
-  //   text: "Create Agent",
-  //   icon: <IoAdd />,
-  //   to: "/admin-dashboard/create-agent",
-  // },
+  {
+    text: "Agent Detail",
+    icon: <BiDetail />,
+    to: "/admin-dashboard/agent-detail",
+  },
 ];

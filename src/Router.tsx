@@ -22,6 +22,11 @@ import CashierWrapper from "./components/cashier/Dashboard/CashierWrapper";
 import PageNotFound from "./components/PageNotFound";
 import Game from "./components/game/Game";
 import GameTest from "./components/game/GameTest";
+import CashBook from "./components/cashier/CashBook";
+import AgentDetail from "./components/bingo-admin/agents/AgentDetail";
+import AgentDashboard from "./components/agent/Dashboard";
+import AdminDashboard from "./components/bingo-admin/Dashboard";
+import CashierDetail from "./components/bingo-admin/cashiers/CashierDetail";
 
 function Router() {
   return (
@@ -39,18 +44,21 @@ function Router() {
       {/* super-admin routes */}
       <Route element={<SuperAdminRoutes />}>
         <Route path="/admin-dashboard" element={<AdminWrapper />}>
+          <Route index element={<AdminDashboard />} />
           {/* branches */}
           <Route path="branches" element={<Branches />} />
           {/* agents */}
           <Route path="agents" element={<Agents />} />
-          {/* <Route  element={<Dashboard />}></Route> */}
+          <Route path="agent-detail" element={<AgentDetail />} />
         </Route>
       </Route>
 
       {/* agent routes */}
       <Route element={<AgentRoutes />}>
         <Route path="agent-dashboard" element={<AgentWrapper />}>
+          <Route index element={<AgentDashboard />} />
           <Route path="cashiers" element={<Cashiers />} />
+          <Route path="cashier-detail" element={<CashierDetail />} />
           <Route path="cards" element={<CardsAgent />} />
           <Route path="register-card" element={<RegisterCard />} />
           <Route path="update-card/:cardId" element={<UpdateCard />} />
@@ -64,6 +72,7 @@ function Router() {
           <Route path="cards" element={<CardsCashier />} />
           <Route path="sell-card" element={<SellCard />} />
           <Route path="view-card/:cardId" element={<ViewCard />} />
+          <Route path="cash-book" element={<CashBook />} />
         </Route>
       </Route>
 

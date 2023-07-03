@@ -117,7 +117,7 @@ function GamePlayController({ activeGame, socket }: Props) {
   }, [gameSocketMessage]);
 
   return (
-    <div className="flex flex-col items-center justify-end gap-2 md:flex-row">
+    <div className="flex w-full flex-row items-center justify-start gap-2 sm:justify-end md:flex-row">
       {/* play */}
       <button
         onClick={(e) => handlePlayClick(e)}

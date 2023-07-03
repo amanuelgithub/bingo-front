@@ -6,17 +6,20 @@ import Button from "../../form/Button";
 import CreateCashier from "./CreateCashier";
 import { Toaster } from "react-hot-toast";
 import ReactLoading from "react-loading";
+import { useNavigate } from "react-router-dom";
 
 function Cashiers() {
   const [cashierCreated, setCashierCreated] = useState(false);
   const [createAgentFormOpen, setCreateAgentFormOpen] = useState(false);
   const [cashiers, setCashiers] = useState<any[]>([]);
 
+  const navigate = useNavigate();
+
   const fetchCashiers = () => {
-    const { accessToken, branchId } = getAuthUser();
+    const { accessToken, agentId } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.get(`/cashiers/branches/${branchId}`)
+    API.get(`/cashiers/agent-branches/${agentId}`)
       .then((result) => {
         setCashiers(result.data);
         console.log("cashiers:  ", result.data);
@@ -95,33 +98,44 @@ function Cashiers() {
                     <th scope="col" className="px-6 py-4">
                       Status
                     </th>
+                    <th scope="col" className="px-6 py-4"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {cashiers &&
-                    cashiers.map((branch) => (
+                    cashiers.map((cashier, index) => (
                       <tr className="border-b bg-neutral-100">
                         {/* <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700"> */}
                         <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          {branch.userId}
+                          {index + 1}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.username}
+                          {cashier.user.username}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.role}
+                          {cashier.user.role}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.email}
+                          {cashier.user.email}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.phone}
+                          {cashier.user.phone}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.branch.name}
+                          {cashier.branch.name}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {branch.user.status}
+                          {cashier.user.status}
+                        </td>
+                        <td
+                          onClick={() =>
+                            navigate("/agent-dashboard/cashier-detail", {
+                              state: { cashierId: cashier.id },
+                            })
+                          }
+                          className="whitespace-nowrap px-6 py-4 text-sm text-green-600 underline hover:cursor-pointer"
+                        >
+                          view detail
                         </td>
                       </tr>
                     ))}

@@ -1,6 +1,7 @@
 import { BsCardText } from "react-icons/bs";
 import { MdSell } from "react-icons/md";
 import { FaGamepad } from "react-icons/fa";
+import { GiCash } from "react-icons/gi";
 
 export const agentSidebarItems = [
   {
@@ -17,5 +18,10 @@ export const agentSidebarItems = [
     text: "Create Game",
     icon: <FaGamepad />,
     to: "/cashier-dashboard/create-game",
+  },
+  {
+    text: "Cash Book",
+    icon: <GiCash />,
+    to: "/cashier-dashboard/cash-book",
   },
 ];

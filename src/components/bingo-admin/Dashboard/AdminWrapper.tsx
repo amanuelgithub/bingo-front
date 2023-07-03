@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../state/contexts/auth-context";
 import API from "../../../config/api";
 import { getAuthUser, storeAuthUser } from "../../../util/localstorage";
-import Dashboard from "./Dashboard";
+import DashboardContainer from "./DashboardContainer";
 import { AuthActionTypes } from "../../../state/actions/auth-actions";
 
 function AdminWrapper() {
@@ -46,7 +46,7 @@ function AdminWrapper() {
     });
   }, []);
 
-  return <div>{completed && <Dashboard />}</div>;
+  return <div>{completed && <DashboardContainer />}</div>;
 }
 
 export default AdminWrapper;

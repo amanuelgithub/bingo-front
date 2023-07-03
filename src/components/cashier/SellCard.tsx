@@ -138,7 +138,7 @@ function SellCard() {
 
   return (
     <div>
-      <Toaster />
+      <Toaster toastOptions={{ className: "bg-yellow-600" }} />
       {!activeGameExists ? (
         <div className="flex h-screen flex-col items-center justify-center">
           <h1 className="text-2xl font-bold text-gray-800">No Game Found</h1>
@@ -170,12 +170,12 @@ function SellCard() {
 
           <div className="flex h-screen flex-col items-center bg-gray-100 p-4">
             {/* started game ... */}
-            <div className="flex w-full flex-row items-center justify-between bg-white px-8 py-4 shadow-md sm:gap-6">
-              <h3 className="text-base font-semibold text-gray-500 sm:text-lg sm:font-bold">
+            <div className="flex w-full flex-col items-center justify-start bg-white px-8 py-4 shadow-md sm:flex-row sm:justify-between sm:gap-6">
+              <h3 className="w-full whitespace-nowrap text-base font-semibold text-gray-500 sm:text-lg sm:font-bold">
                 Started Game
               </h3>
 
-              <h3 className="text-base font-semibold text-gray-500 sm:text-lg sm:font-bold">
+              <h3 className="w-full whitespace-nowrap text-base font-semibold text-gray-500 sm:text-lg sm:font-bold">
                 Money: {activeGame?.money} Birr
               </h3>
 

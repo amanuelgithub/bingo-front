@@ -3,12 +3,13 @@ import InputCell from "../ui/InputCell";
 import Button from "../form/Button";
 import API from "../../config/api";
 import { getAuthUser } from "../../util/localstorage";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 function UpdateCard() {
   const [card, setCard] = useState(
     Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => null))
   );
+  const { state } = useLocation();
   const { cardId } = useParams();
   const navigate = useNavigate();
 
@@ -45,12 +46,15 @@ function UpdateCard() {
     rows.push(RowComp);
   }
 
+  // update card
   const handleUpdateCard = () => {
-    const { accessToken, branchId } = getAuthUser();
+    const { accessToken } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.patch(`/cards?branchId=${branchId}&cardId=${cardId}`, {
-      branchId,
+    // @ts-ignore
+    API.patch(`/cards?branchId=${state.branchId}&cardId=${cardId}`, {
+      // @ts-ignore
+      branchId: state.branchId,
       numbers: card,
     })
       .then((result) => {
@@ -62,23 +66,30 @@ function UpdateCard() {
       .catch((error) => console.log("Error: ", error));
   };
 
+  // fetch card
   useEffect(() => {
-    const { accessToken, branchId } = getAuthUser();
+    const { accessToken } = getAuthUser();
+
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.get(`/cards?branchId=${branchId}&cardId=${cardId}`)
-      .then((result) => {
-        setCard(result.data.numbers);
-      })
-      .catch((error) => console.log("Error: ", error));
-  }, []);
+    // @ts-ignore
+    if (state?.branchId && cardId) {
+      // @ts-ignore
+      API.get(`/cards?branchId=${state.branchId}&cardId=${cardId}`)
+        .then((result) => {
+          setCard(result.data.numbers);
+        })
+        .catch((error) => console.log("Error: ", error));
+    }
+    // @ts-ignore
+  }, [state?.branchId, cardId]);
 
   return (
     <div>
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-gray-100">
         <h3 className="text-3xl font-bold">Update Card</h3>
 
-        <div className="flex flex-col gap-2 rounded-md border-4 border-blue-500 bg-blue-100 p-6">
+        <div className="flex flex-col gap-2 rounded-md border border-gray-200 bg-white p-6">
           <div className="flex flex-row justify-evenly gap-1 text-3xl font-bold">
             <h2 className="w-full rounded-lg bg-red-500 text-center">B</h2>
             <h2 className="w-full rounded-lg bg-orange-500 text-center">I</h2>
@@ -99,7 +110,7 @@ function UpdateCard() {
           {/* Save & Delete Buttons */}
           <div className="flex w-full justify-between gap-4">
             <Link to={"/agent-dashboard/cards"} className="w-full">
-              <Button className="w-full bg-red-600 shadow-md shadow-black">
+              <Button className="w-full bg-red-600 shadow-md shadow-black hover:bg-red-500">
                 Cancel
               </Button>
             </Link>

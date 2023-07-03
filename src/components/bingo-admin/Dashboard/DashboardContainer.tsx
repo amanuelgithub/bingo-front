@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
 
-function Dashboard() {
+function DashboardContainer() {
   const [openSidebar, setOpenSidebar] = useState(false);
 
   const handleOpenSidebar = () => {
@@ -22,7 +22,7 @@ function Dashboard() {
         <div
           className={`${
             openSidebar ? "block" : "hidden"
-          } absolute left-0 top-0 z-10 h-full w-72 bg-blue-600 md:relative md:block md:w-3/12`}
+          } absolute left-0 top-0 h-full w-72 bg-blue-600 md:relative md:block md:w-3/12`}
         >
           <Sidebar />
         </div>
@@ -36,4 +36,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default DashboardContainer;

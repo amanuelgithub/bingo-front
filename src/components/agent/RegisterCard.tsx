@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputCell from "../ui/InputCell";
 import Button from "../form/Button";
 import API from "../../config/api";
 import { getAuthUser } from "../../util/localstorage";
 
 function RegisterCard() {
+  const [selectedBranch, setSelectedBranch] = useState("");
+  const [branches, setBranches] = useState([
+    { id: "", name: "", createdAt: "", modifiedAt: "" },
+  ]);
+
   const [card, setCard] = useState(
     Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => null))
   );
@@ -42,16 +47,31 @@ function RegisterCard() {
     rows.push(RowComp);
   }
 
-  const handleRegisterCard = () => {
-    console.log("register card values: ", card);
-    const { accessToken, branchId } = getAuthUser();
+  // get list of branches
+  useEffect(() => {
+    const { accessToken, agentId } = getAuthUser();
     API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    API.post("/cards", { branchId, numbers: card })
-      .then((result) => {
-        console.log("result: ", result.data);
-      })
-      .catch((error) => console.log("Error: ", error));
+    API.get(`/branches/${agentId}`).then((result) => {
+      setBranches(result.data);
+    });
+  }, []);
+
+  const handleBranchSelection = (e: any) => {
+    setSelectedBranch(e.target.value);
+  };
+
+  const handleRegisterCard = () => {
+    const { accessToken } = getAuthUser();
+    API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+
+    if (selectedBranch) {
+      API.post("/cards", { branchId: selectedBranch, numbers: card })
+        .then((result) => {
+          console.log("result: ", result.data);
+        })
+        .catch((error) => console.log("Error: ", error));
+    }
   };
 
   return (
@@ -59,7 +79,32 @@ function RegisterCard() {
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-gray-100">
         <h3 className="text-3xl font-bold">Register Card</h3>
 
-        <div className="flex flex-col gap-2 rounded-md border-4 border-blue-500 bg-blue-100 p-6">
+        <div className="flex flex-col gap-2 rounded-md border border-gray-200 bg-white p-6">
+          {/* BranchId */}
+          <div className="flex flex-row items-center justify-between gap-2 ">
+            <h1 className="whitespace-nowrap text-lg font-bold">
+              Select Branch:{" "}
+            </h1>
+
+            <select
+              id="branchId"
+              name="branchId"
+              className="w-full border-2 border-gray-200 py-2"
+              onChange={(e) => handleBranchSelection(e)}
+            >
+              {branches && (
+                <>
+                  <option value="">select branch</option>
+                  {branches.map((branch) => (
+                    <option value={branch.id}>{branch.name}</option>
+                  ))}
+                </>
+              )}
+            </select>
+          </div>
+
+          <hr className="py-8" />
+
           <div className="flex flex-row justify-evenly gap-1 text-3xl font-bold">
             <h2 className="w-full rounded-lg bg-red-500 text-center">B</h2>
             <h2 className="w-full rounded-lg bg-orange-500 text-center">I</h2>
