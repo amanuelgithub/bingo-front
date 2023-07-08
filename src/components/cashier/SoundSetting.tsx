@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { AiFillSound } from "react-icons/ai";
-import { AudioLanguage, useAudioLanguage } from "../../audio-lang-context";
+import {
+  AudioLanguage,
+  useAudioLanguage,
+} from "../../state/audio-lang-context";
 import { storeSoundPreference } from "../../util/localstorage";
 
 function SoundSetting() {

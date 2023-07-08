@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { getSoundPreference } from "./util/localstorage";
+import { getSoundPreference } from "../util/localstorage";
 
 export type AudioLanguage = "Amharic" | "English" | "Affan Oromo";
 

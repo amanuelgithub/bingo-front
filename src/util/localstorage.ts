@@ -1,4 +1,4 @@
-import { AudioLanguage } from "../audio-lang-context";
+import { AudioLanguage } from "../state/audio-lang-context";
 import { IGame } from "../models/IGame";
 import { UserRoleEnum, UserStatusEnum } from "../models/IUser";
 
@@ -24,6 +24,7 @@ interface IAuthUser {
 export const AUTH_USER_STORE_NAME = "bingo-auth-user";
 export const ACTIVE_GAME_STORE_NAME = "active-game";
 export const ACTIVE_GAME_SOLD_CARDS = "game-sold-cards";
+export const ACTIVE_GAME_CALLED_NUMBERS = "called-numbers";
 export const SOUND_PREFERENCE = "sound-preference";
 
 /** stores authenticated user data to - localstorage */
@@ -80,6 +81,24 @@ export function getStoredSoldCards(): ISoldCards {
   }
 
   return {} as ISoldCards;
+}
+
+/** stores active game data to - localstorage */
+export function storeCalledNumbers(calledNumbers: number[]) {
+  window.localStorage.setItem(
+    ACTIVE_GAME_CALLED_NUMBERS,
+    JSON.stringify(calledNumbers)
+  );
+}
+/** returns active game data from - localstorage */
+export function getStoredCalledNumbers(): number[] {
+  if (localStorage.getItem(ACTIVE_GAME_CALLED_NUMBERS)) {
+    return JSON.parse(
+      localStorage.getItem(ACTIVE_GAME_CALLED_NUMBERS) ?? ""
+    ) as number[];
+  }
+
+  return {} as number[];
 }
 
 /** stores sound preference - localstorage */

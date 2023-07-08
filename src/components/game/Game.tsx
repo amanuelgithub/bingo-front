@@ -12,12 +12,14 @@ import { motion, useAnimationControls } from "framer-motion";
 import {
   ISoldCards,
   getAuthUser,
+  storeCalledNumbers,
   storeSoldCards,
 } from "../../util/localstorage";
 import API from "../../config/api";
 import { IBall } from "../../models/IBall";
 import FailedToConnect from "../FailedToConnect";
 import ReactAudioPlayer from "react-audio-player";
+import { useCalledNumbers } from "../../state/called-numbers-context";
 
 // create an object containing a number and its ball color
 
@@ -40,6 +42,8 @@ function Game() {
   const [currentPlayingNumber, setCurrentPlayingNumber] = useState<
     number | undefined
   >();
+
+  const { updateCalledNumbers } = useCalledNumbers();
 
   const [socket, setSocket] = useState<Socket>();
   const [gameSocketMessage, setGameSocketMessage] =
@@ -309,6 +313,16 @@ function Game() {
   }, [gameSocketMessage]);
 
   useEffect(() => {
+    if (calledBallNumbers) {
+      console.log("called numbers: ", calledBallNumbers);
+      // context value will not be sync since the game page
+      // is loaded in another page
+      updateCalledNumbers(calledBallNumbers);
+      storeCalledNumbers(
+        calledBallNumbers.filter((val): val is number => val !== undefined)
+      );
+    }
+
     if (calledBallNumbers.length < 4) {
       setLast4CalledBalls(calledBallNumbers.slice());
     } else {

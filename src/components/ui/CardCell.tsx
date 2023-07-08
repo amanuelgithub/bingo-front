@@ -48,18 +48,3 @@ export default function CardCell({
     </div>
   );
 }
-// return (
-//   <div
-//     className={`border-2
-
-//    ${xIndex === 0 ? "border-t-0" : ""}
-//    ${yIndex === 0 ? "border-l-0" : ""}
-//    ${xIsSize ? "border-b-0" : ""}
-//    ${yIsSize ? "border-r-0" : ""}
-
-//      flex h-20 w-20 items-center justify-center border-gray-700 bg-gray-300 text-lg font-semibold
-//      sm:h-24 sm:w-24 sm:text-3xl`}
-//   >
-//     {children}
-//   </div>
-// );

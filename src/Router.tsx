@@ -3,7 +3,6 @@ import SignIn from "./SignIn";
 import CreateGame from "./components/cashier/CreateGame";
 import SellCard from "./components/cashier/SellCard";
 import ViewCard from "./components/ViewCard";
-import CheckCard from "./components/CheckCard";
 import FindAccount from "./components/FindAccount";
 import RecoverPassword from "./components/RecoverPassword";
 import SuperAdminRoutes from "./util/SuperAdminRoutes";
@@ -37,7 +36,6 @@ function Router() {
       <Route path="" element={<Navigate to={"/signin"} />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/view-card" element={<ViewCard />} />
-      <Route path="/check-card" element={<CheckCard />} />
 
       <Route path="/find-account" element={<FindAccount />} />
       <Route path="/recover-password" element={<RecoverPassword />} />
