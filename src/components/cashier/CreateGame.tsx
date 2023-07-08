@@ -8,6 +8,8 @@ import { Formik } from "formik";
 import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { BiArrowBack } from "react-icons/bi";
+import { SlGameController } from "react-icons/sl";
+import { MdOutlineGamepad } from "react-icons/md";
 import { GameContext } from "../../state/contexts/game-context";
 import { GameActionTypes } from "../../state/actions/game-actions";
 
@@ -24,7 +26,7 @@ function CreateGame() {
   const notifyGameCreated = () =>
     toast.success("Game creation success.", {
       duration: 3000,
-      position: "bottom-center",
+      position: "top-right",
     });
 
   useEffect(() => {
@@ -73,62 +75,72 @@ function CreateGame() {
       <Toaster />
 
       {activeGameExists || gameCreated ? (
-        // rendered if an active game exists
-        <div className="flex h-screen flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Active Game exist!!
-          </h1>
+        <>
+          <div className="flex h-full flex-col items-center justify-start py-10 sm:py-20">
+            <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-8 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-center sm:gap-8 md:min-w-[550px] md:p-16 md:text-xl">
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-2xl sm:text-4xl">
+                <h1>Active Game exist</h1>
+                <MdOutlineGamepad className="text-6xl" />
 
-          <div className="flex flex-row items-center justify-between gap-1 text-sm text-blue-700">
-            <BiArrowBack className="text-xs" />
-            <Link
-              to={"/cashier-dashboard/sell-card"}
-              className="hover:underline"
-            >
-              Go to game page
-            </Link>
+                <div className="flex flex-row items-center justify-between gap-1 text-sm text-blue-700">
+                  <BiArrowBack className="text-xs" />
+                  <Link
+                    to={"/cashier-dashboard/sell-card"}
+                    className="hover:underline"
+                  >
+                    Go to game page
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </>
       ) : (
         // rendered if an active game does not exists
-        <div className="flex h-screen flex-col items-center justify-center gap-4 bg-gray-100">
-          <h1 className="mb-4 text-4xl font-bold">Create New Game</h1>
-          {/* <Toaster /> */}
+        <div className="flex h-full flex-col items-center justify-start py-10 sm:py-20">
+          <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-8 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-center sm:gap-8 md:min-w-[550px] md:p-16 md:text-xl">
+            <div className="flex h-full flex-col items-center justify-center gap-2 text-2xl sm:text-4xl">
+              <div className="flex flex-row items-center justify-center gap-2">
+                <SlGameController className="text-4xl" />
+                <h1>Create Game</h1>
+              </div>
 
-          <Formik
-            initialValues={{ money: 10 }}
-            validationSchema={validationSchema}
-            onSubmit={(value, { setSubmitting }) => {
-              setSubmitting(true);
-              handleCreateGame(value);
-              setSubmitting(false);
-            }}
-          >
-            {(formik) => (
-              <form onSubmit={formik.handleSubmit}>
-                <TextField
-                  id="money"
-                  type={"number"}
-                  {...formik.getFieldProps("money")}
-                  placeholder="Money"
-                  className="my-2"
-                />
-                {formik.touched.money && formik.errors.money ? (
-                  <div className="px-2 text-red-600 md:px-8">
-                    {formik.errors.money}
-                  </div>
-                ) : null}
+              <Formik
+                initialValues={{ money: 10 }}
+                validationSchema={validationSchema}
+                onSubmit={(value, { setSubmitting }) => {
+                  setSubmitting(true);
+                  handleCreateGame(value);
+                  setSubmitting(false);
+                }}
+              >
+                {(formik) => (
+                  <form onSubmit={formik.handleSubmit}>
+                    <TextField
+                      id="money"
+                      type={"number"}
+                      {...formik.getFieldProps("money")}
+                      placeholder="Money"
+                      className="my-2 border border-gray-400 focus:outline-green-500"
+                    />
+                    {formik.touched.money && formik.errors.money ? (
+                      <div className="px-2 text-red-600 md:px-8">
+                        {formik.errors.money}
+                      </div>
+                    ) : null}
 
-                <Button
-                  type={"submit"}
-                  disabled={formik.isSubmitting}
-                  className={"w-full"}
-                >
-                  Create
-                </Button>
-              </form>
-            )}
-          </Formik>
+                    <Button
+                      type={"submit"}
+                      disabled={formik.isSubmitting}
+                      className={"w-full bg-green-600 hover:bg-green-500"}
+                    >
+                      Create
+                    </Button>
+                  </form>
+                )}
+              </Formik>
+            </div>
+          </div>
         </div>
       )}
     </div>

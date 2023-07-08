@@ -13,16 +13,14 @@ function Branches() {
   const [branches, setBranches] = useState<any[]>([]);
 
   const fetchBranches = () => {
-    setTimeout(() => {
-      const { accessToken } = getAuthUser();
-      API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    const { accessToken } = getAuthUser();
+    API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-      API.get("/branches")
-        .then((result) => {
-          setBranches(result.data);
-        })
-        .catch((err) => console.log("Error: ", err));
-    }, 1000);
+    API.get("/branches")
+      .then((result) => {
+        setBranches(result.data);
+      })
+      .catch((err) => console.log("Error: ", err));
   };
 
   useEffect(() => {

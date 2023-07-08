@@ -1,8 +1,7 @@
-import { FaCashRegister } from "react-icons/fa";
-import { BsCardText } from "react-icons/bs";
+import { BsCardText, BsFillPersonLinesFill } from "react-icons/bs";
 import { GiArchiveRegister } from "react-icons/gi";
 import { RiDashboardLine } from "react-icons/ri";
-import { BiDetail } from "react-icons/bi";
+import { IoPeopleOutline } from "react-icons/io5";
 
 export const agentSidebarItems = [
   {
@@ -12,12 +11,12 @@ export const agentSidebarItems = [
   },
   {
     text: "Cashiers",
-    icon: <FaCashRegister />,
+    icon: <IoPeopleOutline />,
     to: "/agent-dashboard/cashiers",
   },
   {
     text: "Cashier Detail",
-    icon: <BiDetail />,
+    icon: <BsFillPersonLinesFill />,
     to: "/agent-dashboard/cashier-detail",
   },
   {

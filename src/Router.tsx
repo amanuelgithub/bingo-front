@@ -27,6 +27,7 @@ import AgentDetail from "./components/bingo-admin/agents/AgentDetail";
 import AgentDashboard from "./components/agent/Dashboard";
 import AdminDashboard from "./components/bingo-admin/Dashboard";
 import CashierDetail from "./components/bingo-admin/cashiers/CashierDetail";
+import SoundSetting from "./components/cashier/SoundSetting";
 
 function Router() {
   return (
@@ -73,6 +74,7 @@ function Router() {
           <Route path="sell-card" element={<SellCard />} />
           <Route path="view-card/:cardId" element={<ViewCard />} />
           <Route path="cash-book" element={<CashBook />} />
+          <Route path="sound-setting" element={<SoundSetting />} />
         </Route>
       </Route>
 

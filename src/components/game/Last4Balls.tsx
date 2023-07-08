@@ -35,14 +35,17 @@ function Last4Balls({ last4BallsIndex, balls }: Props) {
           last4BallsIndex
             .slice()
             .reverse()
-            .map((val) => (
+            .map((val, index) => (
               <motion.div
+                key={index}
                 initial={{ x: 0 }}
                 animate={{ x: 2, transition: { repeat: Infinity } }}
-                key={val}
                 className="relative h-[100%] w-[25%]"
               >
-                <div className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">
+                <div
+                  key={val}
+                  className="flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50"
+                >
                   <img
                     src={balls[(val ?? 0) - 1].color}
                     alt=""

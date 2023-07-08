@@ -9,21 +9,27 @@ import WaitingToStart from "./WaitingToStart";
 import { Socket, io } from "socket.io-client";
 import { GameStateEnum, IGame, IGameSocketMessage } from "../../models/IGame";
 import { motion, useAnimationControls } from "framer-motion";
-import { getAuthUser } from "../../util/localstorage";
+import {
+  ISoldCards,
+  getAuthUser,
+  storeSoldCards,
+} from "../../util/localstorage";
 import API from "../../config/api";
 import { IBall } from "../../models/IBall";
 import FailedToConnect from "../FailedToConnect";
+import ReactAudioPlayer from "react-audio-player";
 
 // create an object containing a number and its ball color
 
 function Game() {
   const [activeGame, setActiveGame] = useState<IGame>();
+
   const [loading, setLoading] = useState(true);
   const [gameState, setGameState] = useState<GameStateEnum>(
     GameStateEnum.CREATED
   );
 
-  const [calledBallsIndex, setCalledBallsIndex] = useState<
+  const [calledBallNumbers, setCalledBallNumbers] = useState<
     (number | undefined)[]
   >([]);
   const [last4CalledBalls, setLast4CalledBalls] = useState<
@@ -31,7 +37,7 @@ function Game() {
   >([]);
 
   // current playing number index = playingNumbers[currentIndex]
-  const [currentPlayingIndex, setCurrentPlayingIndex] = useState<
+  const [currentPlayingNumber, setCurrentPlayingNumber] = useState<
     number | undefined
   >();
 
@@ -40,6 +46,8 @@ function Game() {
     useState<IGameSocketMessage>({
       room: "",
       gameId: "",
+      soundLang: "am",
+      soundUrl: "",
       gameData: {
         currentIndex: 0,
         gameState: GameStateEnum.CREATED,
@@ -56,7 +64,11 @@ function Game() {
   const [g, setG] = useState<IBall[]>([]);
   const [o, setO] = useState<IBall[]>([]);
 
+  const [audioUrl, setAudioUrl] = useState("");
+
   const handleCount = (val: number) => setCount(val);
+
+  const refresh = () => window.location.reload();
 
   // setup socket connection
   useEffect(() => {
@@ -82,26 +94,43 @@ function Game() {
     "/images/svg/ball-image (7).svg",
   ];
 
+  const fetchActiveGameOfCashier = () => {
+    API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+
+    API.get(`/games/active/${cashierId}`)
+      .then((res) => {
+        if (res.data) {
+          setActiveGame(res.data);
+        }
+      })
+      .catch((err) => {
+        if (err.response?.data.statusCode === 404) {
+          console.log("error: ", err);
+        }
+      });
+  };
+
   // gets an active game of by cashier
   useEffect(() => {
-    const fetchActiveGameOfCashier = () => {
-      API.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-
-      API.get(`/games/active/${cashierId}`)
-        .then((res) => {
-          if (res.data) {
-            setActiveGame(res.data);
-          }
-        })
-        .catch((err) => {
-          if (err.response?.data.statusCode === 404) {
-            console.log("error: ", err);
-          }
-        });
-    };
-
     fetchActiveGameOfCashier();
   }, []);
+
+  // interval that run to fetch active game if their are none
+  useEffect(() => {
+    let getActiveGameInterval: any;
+    if (
+      gameState === GameStateEnum.END ||
+      gameState === GameStateEnum.CREATED
+    ) {
+      getActiveGameInterval = setInterval(() => {
+        fetchActiveGameOfCashier();
+      }, 2000);
+    }
+
+    return () => {
+      clearInterval(getActiveGameInterval);
+    };
+  }, [gameState]);
 
   // create an object of array containing a number and its ball color
   useEffect(() => {
@@ -170,6 +199,8 @@ function Game() {
       joinRoom({
         room: `${activeGame?.id}${cashierId}`,
         gameId: activeGame?.id + ".json",
+        soundLang: "am",
+        soundUrl: "",
         gameData: {
           ...gameSocketMessage?.gameData,
           gameState: GameStateEnum.CREATED,
@@ -200,8 +231,9 @@ function Game() {
   useEffect(() => {
     if (gameSocketMessage.gameData) {
       setGameState(gameSocketMessage.gameData?.gameState);
+      console.log("sound url: ", gameSocketMessage?.soundUrl);
     }
-  }, [gameSocketMessage]);
+  }, [gameSocketMessage, gameState]);
 
   // main game play control
   useEffect(() => {
@@ -212,7 +244,9 @@ function Game() {
       gameSocketMessage.gameData?.gameState === GameStateEnum.END &&
       gameState === GameStateEnum.END
     ) {
-      // todo: handle game ended state
+      refresh();
+      // remove sold info from localstorage
+      storeSoldCards({} as ISoldCards);
     } else if (count === 0 && gameSocketMessage.gameData?.currentIndex >= 75) {
       // game should be ended
       sendMessageOnRoom({
@@ -248,7 +282,7 @@ function Game() {
 
         // increase the currentPlayingIndex
         if (gameSocketMessage.gameData) {
-          setCurrentPlayingIndex(
+          setCurrentPlayingNumber(
             gameSocketMessage.gameData?.playingNumbers[
               gameSocketMessage.gameData?.currentIndex
             ]
@@ -262,25 +296,37 @@ function Game() {
     };
   }, [count, gameSocketMessage, gameState]);
 
+  // set audioUrl when gameSocketMessage Changes
   useEffect(() => {
-    if (calledBallsIndex.length < 4) {
-      setLast4CalledBalls(calledBallsIndex.slice());
+    let audioDelay: any;
+    if (gameSocketMessage.soundUrl) {
+      audioDelay = setTimeout(() => {
+        setAudioUrl(gameSocketMessage.soundUrl);
+      }, 4000);
+    }
+
+    return () => clearTimeout(audioDelay);
+  }, [gameSocketMessage]);
+
+  useEffect(() => {
+    if (calledBallNumbers.length < 4) {
+      setLast4CalledBalls(calledBallNumbers.slice());
     } else {
       setLast4CalledBalls(
-        calledBallsIndex.slice(
-          calledBallsIndex.length - 4,
-          calledBallsIndex.length
+        calledBallNumbers.slice(
+          calledBallNumbers.length - 4,
+          calledBallNumbers.length
         )
       );
     }
-  }, [calledBallsIndex]);
+  }, [calledBallNumbers]);
 
-  // appends called ball index when currentPlayingIndex changes
+  // appends called ball index when currentPlayingNumber changes
   useEffect(() => {
-    if (currentPlayingIndex) {
-      setCalledBallsIndex((prevVal) => [...prevVal, currentPlayingIndex]); //
+    if (currentPlayingNumber) {
+      setCalledBallNumbers((prevVal) => [...prevVal, currentPlayingNumber]); //
     }
-  }, [currentPlayingIndex]);
+  }, [currentPlayingNumber]);
 
   if (gameState === GameStateEnum.END) {
     return <div>show game ended page</div>;
@@ -298,6 +344,19 @@ function Game() {
   return (
     <div className="absolute left-0 top-0 flex h-screen w-screen overflow-x-hidden overflow-y-hidden">
       <GameBackground />
+
+      <div className="hidden">
+        {audioUrl && (
+          // {gameSocketMessage?.soundUrl && audioUrl && (
+          <ReactAudioPlayer
+            src={audioUrl}
+            // src={gameSocketMessage?.soundUrl}
+            autoPlay
+            controls
+          />
+        )}
+      </div>
+
       {/* count-down timer component */}
       {!loading && (
         <CountDown
@@ -315,8 +374,8 @@ function Game() {
         <PlayBall
           ball={
             gameSocketMessage &&
-            currentPlayingIndex &&
-            balls[currentPlayingIndex - 1]
+            currentPlayingNumber &&
+            balls[currentPlayingNumber - 1]
           }
           gameState={gameState}
         />
@@ -354,9 +413,10 @@ function Game() {
 
             {b.map((c, index) => (
               <PanelCell
-                index={currentPlayingIndex}
+                // key={c.number}
+                calledPlayingNumber={currentPlayingNumber}
                 ballNumber={c.number}
-                isInCalled={calledBallsIndex.includes(c.number)}
+                isInCalled={calledBallNumbers.includes(c.number)}
                 color={c.color}
               />
             ))}
@@ -375,9 +435,10 @@ function Game() {
 
             {i.map((c) => (
               <PanelCell
-                index={currentPlayingIndex}
+                // key={c.number}
+                calledPlayingNumber={currentPlayingNumber}
                 ballNumber={c.number}
-                isInCalled={calledBallsIndex.includes(c.number)}
+                isInCalled={calledBallNumbers.includes(c.number)}
                 color={c.color}
               />
             ))}
@@ -396,9 +457,10 @@ function Game() {
 
             {n.map((c) => (
               <PanelCell
-                index={currentPlayingIndex}
+                // key={c.number}
+                calledPlayingNumber={currentPlayingNumber}
                 ballNumber={c.number}
-                isInCalled={calledBallsIndex.includes(c.number)}
+                isInCalled={calledBallNumbers.includes(c.number)}
                 color={c.color}
               />
             ))}
@@ -417,9 +479,10 @@ function Game() {
 
             {g.map((c) => (
               <PanelCell
-                index={currentPlayingIndex}
+                // key={c.number}
+                calledPlayingNumber={currentPlayingNumber}
                 ballNumber={c.number}
-                isInCalled={calledBallsIndex.includes(c.number)}
+                isInCalled={calledBallNumbers.includes(c.number)}
                 color={c.color}
               />
             ))}
@@ -438,9 +501,10 @@ function Game() {
 
             {o.map((c) => (
               <PanelCell
-                index={currentPlayingIndex}
+                // key={c.number}
+                calledPlayingNumber={currentPlayingNumber}
                 ballNumber={c.number}
-                isInCalled={calledBallsIndex.includes(c.number)}
+                isInCalled={calledBallNumbers.includes(c.number)}
                 color={c.color}
               />
             ))}

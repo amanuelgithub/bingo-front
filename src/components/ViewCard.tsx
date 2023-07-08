@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CardCell from "./ui/CardCell";
 import Button from "./form/Button";
 import API from "../config/api";
 import { getAuthUser } from "../util/localstorage";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function ViewCard() {
   const [card, setCard] = useState(
@@ -33,6 +33,7 @@ function ViewCard() {
       <div className="flex w-full">
         {row.map((val, y) => (
           <CardCell
+            key={y}
             xIndex={x}
             yIndex={y}
             xIsSize={x === row.length - 1}
@@ -67,8 +68,10 @@ function ViewCard() {
           {/* card */}
           {card && (
             <div className="rounded-md border-2 border-red-800 bg-yellow-500 p-1">
-              {rows.map((row) => (
-                <div className="flex w-full flex-col">{row}</div>
+              {rows.map((row, index) => (
+                <div key={index} className="flex w-full flex-col">
+                  {row}
+                </div>
               ))}
             </div>
           )}

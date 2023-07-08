@@ -28,7 +28,7 @@ function CashBook() {
               Last Checkout Date:
             </h2>
 
-            <span className="w-1/3 whitespace-nowrap">
+            <span className="w-1/3 whitespace-nowrap text-green-600">
               {cashBook.lastCheckOutDate &&
                 format(new Date(cashBook.lastCheckOutDate), "yyyy-MM-dd")}{" "}
               G.C
@@ -42,7 +42,9 @@ function CashBook() {
               Due Cash(in Birr):
             </h2>
 
-            <span className="w-1/3 whitespace-nowrap">{cashBook.dueCash}</span>
+            <span className="w-1/3 whitespace-nowrap text-green-600">
+              {cashBook.dueCash}
+            </span>
           </div>
         </div>
       )}

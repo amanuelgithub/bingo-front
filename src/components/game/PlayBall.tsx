@@ -36,16 +36,6 @@ function PlayBall({ ball, gameState }: Props) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   let interval = setTimeout(() => {
-  //     setHide((prev) => !prev);
-  //   }, 2000);
-
-  //   return () => {
-  //     clearTimeout(interval);
-  //   };
-  // }, [hide]);
-
   useEffect(() => {
     setHide(true);
   }, [ball]);
@@ -86,6 +76,13 @@ function PlayBall({ ball, gameState }: Props) {
                     transition: { duration: 0.3, type: "spring" },
                   }}
                   transition={{ duration: 1.5, type: "spring" }}
+                  onAnimationStart={() => {
+                    console.log("PlayBall Anim Start!");
+                  }}
+                  onAnimationEnd={() => console.log("PlayBall Anim End!")}
+                  onAnimationComplete={() =>
+                    console.log("PlayBall Anim Complete!")
+                  }
                   className={`relative h-[100%] w-[100%]`}
                 >
                   <div className="relative flex h-[100%] w-[100%] items-center justify-center rounded-[100%] bg-opacity-50">

@@ -7,16 +7,25 @@ import { getAuthUser } from "../../util/localstorage";
 interface Props {
   socket?: Socket;
   activeGame: IGame | undefined;
+  gameState: GameStateEnum;
+  handleGameState: (state: GameStateEnum) => void;
 }
 
-function GamePlayController({ activeGame, socket }: Props) {
-  const [gameState, setGameState] = useState<GameStateEnum>(
-    GameStateEnum.CREATED
-  );
+function GamePlayController({
+  gameState,
+  handleGameState,
+  activeGame,
+  socket,
+}: Props) {
+  // const [gameState, setGameState] = useState<GameStateEnum>(
+  //   GameStateEnum.CREATED
+  // );
   const [gameSocketMessage, setGameSocketMessage] =
     useState<IGameSocketMessage>({
       room: "",
       gameId: "",
+      soundLang: "am",
+      soundUrl: "",
       gameData: {
         currentIndex: 0,
         gameState: GameStateEnum.CREATED,
@@ -41,11 +50,13 @@ function GamePlayController({ activeGame, socket }: Props) {
 
   const handlePlayClick = (e: any) => {
     e.preventDefault();
-    setGameState(GameStateEnum.PLAYING);
+    handleGameState(GameStateEnum.PLAYING);
     // send message to server through socket
     sendMessageOnRoom({
       room,
       gameId: gameSocketMessage?.gameId,
+      soundLang: "am",
+      soundUrl: "",
       gameData: {
         ...gameSocketMessage?.gameData,
         gameState: GameStateEnum.PLAYING,
@@ -54,11 +65,13 @@ function GamePlayController({ activeGame, socket }: Props) {
   };
   const handlePauseClick = (e: any) => {
     e.preventDefault();
-    setGameState(GameStateEnum.PAUSED);
+    handleGameState(GameStateEnum.PAUSED);
 
     sendMessageOnRoom({
       room,
       gameId: gameSocketMessage?.gameId,
+      soundLang: "am",
+      soundUrl: "",
       gameData: {
         ...gameSocketMessage?.gameData,
         gameState: GameStateEnum.PAUSED,
@@ -67,11 +80,13 @@ function GamePlayController({ activeGame, socket }: Props) {
   };
   const handleEndClick = (e: any) => {
     e.preventDefault();
-    setGameState(GameStateEnum.END);
+    handleGameState(GameStateEnum.END);
 
     sendMessageOnRoom({
       room,
       gameId: gameSocketMessage?.gameId,
+      soundLang: "am",
+      soundUrl: "",
       gameData: {
         ...gameSocketMessage?.gameData,
         gameState: GameStateEnum.END,
@@ -84,6 +99,8 @@ function GamePlayController({ activeGame, socket }: Props) {
     joinRoom({
       room,
       gameId: activeGame?.id + ".json",
+      soundLang: "am",
+      soundUrl: "",
       gameData: {
         ...gameSocketMessage?.gameData,
         gameState: GameStateEnum.CREATED,
@@ -112,7 +129,7 @@ function GamePlayController({ activeGame, socket }: Props) {
   // when message from socket received
   useEffect(() => {
     if (gameSocketMessage.gameData) {
-      setGameState(gameSocketMessage.gameData.gameState);
+      handleGameState(gameSocketMessage.gameData.gameState);
     }
   }, [gameSocketMessage]);
 

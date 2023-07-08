@@ -1,17 +1,20 @@
-import { BsCardText } from "react-icons/bs";
-import { MdSell } from "react-icons/md";
 import { FaGamepad } from "react-icons/fa";
 import { GiCash } from "react-icons/gi";
+import {
+  AiFillSound,
+  AiOutlineCreditCard,
+  AiOutlinePlayCircle,
+} from "react-icons/ai";
 
 export const agentSidebarItems = [
   {
     text: "Cards",
-    icon: <BsCardText />,
+    icon: <AiOutlineCreditCard />,
     to: "/cashier-dashboard/cards",
   },
   {
-    text: "Sell Cards",
-    icon: <MdSell />,
+    text: "Game Play",
+    icon: <AiOutlinePlayCircle />,
     to: "/cashier-dashboard/sell-card",
   },
   {
@@ -23,5 +26,10 @@ export const agentSidebarItems = [
     text: "Cash Book",
     icon: <GiCash />,
     to: "/cashier-dashboard/cash-book",
+  },
+  {
+    text: "Sound",
+    icon: <AiFillSound />,
+    to: "/cashier-dashboard/sound-setting",
   },
 ];

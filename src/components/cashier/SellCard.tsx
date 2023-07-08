@@ -1,18 +1,33 @@
 import { useEffect, useState } from "react";
 import Button from "../form/Button";
 import API from "../../config/api";
-import { getAuthUser } from "../../util/localstorage";
+import {
+  ISoldCards,
+  getAuthUser,
+  storeSoldCards,
+} from "../../util/localstorage";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { BiArrowToRight } from "react-icons/bi";
 import { BsArrowUpRight } from "react-icons/bs";
-import { IGame } from "../../models/IGame";
+import { GameStateEnum, IGame } from "../../models/IGame";
 import ReactLoading from "react-loading";
 import GamePlayController from "./GamePlayController";
 import io, { Socket } from "socket.io-client";
+import GameNotFound from "./GameNotFound";
 
 function SellCard() {
   const [socket, setSocket] = useState<Socket>();
+  const [gameState, setGameState] = useState<GameStateEnum>(
+    GameStateEnum.CREATED
+  );
+
+  // state to show sold cards information on the WaitingToStart. page
+  const [soldCardStat, setSoldCardStat] = useState<ISoldCards>();
+
+  const handleGameState = (state: GameStateEnum) => {
+    setGameState(state);
+  };
 
   useEffect(() => {
     const newSocket = io("http://localhost:8001");
@@ -30,16 +45,28 @@ function SellCard() {
 
   const { accessToken, cashierId } = getAuthUser();
 
+  //
+  useEffect(() => {
+    if (activeGame && gamePlays) {
+      const soldCards: ISoldCards = { money: activeGame.money, cards: [] };
+      gamePlays.map((play) => {
+        soldCards.cards.push({ id: play.cardId });
+      });
+      // setSoldCardStat(soldCards);
+      storeSoldCards(soldCards);
+    }
+  }, [gamePlays, activeGame]);
+
   const notifyCardSold = () =>
     toast.success("Card sell success.", {
       duration: 3000,
-      position: "bottom-center",
+      position: "top-right",
     });
 
   const notifyCardSellError = (err: string) =>
     toast.error(`Card Sell error. \n ${err}`, {
       duration: 3000,
-      position: "bottom-center",
+      position: "top-right",
     });
 
   const fetchActiveGameOfCashier = () => {
@@ -139,21 +166,8 @@ function SellCard() {
   return (
     <div>
       <Toaster toastOptions={{ className: "bg-yellow-600" }} />
-      {!activeGameExists ? (
-        <div className="flex h-screen flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold text-gray-800">No Game Found</h1>
-
-          <div className="flex flex-row items-center justify-between gap-1 text-sm text-blue-700">
-            <Link
-              to={"/cashier-dashboard/create-game"}
-              className="hover:underline"
-            >
-              go to create game
-            </Link>
-
-            <BiArrowToRight className="text-xs" />
-          </div>
-        </div>
+      {!activeGameExists || gameState === GameStateEnum.END ? (
+        <GameNotFound />
       ) : (
         <>
           {/* open page in a new tab */}
@@ -180,7 +194,12 @@ function SellCard() {
               </h3>
 
               {/* play, pause, end buttons */}
-              <GamePlayController activeGame={activeGame} socket={socket} />
+              <GamePlayController
+                gameState={gameState}
+                handleGameState={handleGameState}
+                activeGame={activeGame}
+                socket={socket}
+              />
             </div>
 
             <div className="flex w-full flex-col gap-4 sm:mt-20 sm:flex-row sm:justify-between ">

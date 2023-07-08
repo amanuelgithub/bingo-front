@@ -3,19 +3,24 @@ import Ball from "./Ball";
 import Cell from "./Cell";
 
 interface Props {
-  index?: number;
+  calledPlayingNumber?: number;
   ballNumber: number;
   color: string; // is just an svg images location
   isInCalled: boolean; // checks if it is in called array
 }
 
-function PanelCell({ ballNumber, isInCalled, color, index }: Props) {
+function PanelCell({
+  ballNumber,
+  isInCalled,
+  color,
+  calledPlayingNumber,
+}: Props) {
   return (
     <>
-      {index !== undefined && (
+      {calledPlayingNumber !== undefined && (
         // animated ball
         <Ball
-          called={index === ballNumber ? true : false}
+          called={calledPlayingNumber === ballNumber ? true : false}
           color={color}
           isInCalled={isInCalled}
         >
@@ -25,7 +30,7 @@ function PanelCell({ ballNumber, isInCalled, color, index }: Props) {
 
       {/* cell */}
       <Cell
-        called={(index ?? 0) !== ballNumber ? true : false}
+        called={(calledPlayingNumber ?? 0) !== ballNumber ? true : false}
         isInCalled={isInCalled}
         ballNumber={ballNumber}
       />

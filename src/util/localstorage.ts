@@ -1,3 +1,4 @@
+import { AudioLanguage } from "../audio-lang-context";
 import { IGame } from "../models/IGame";
 import { UserRoleEnum, UserStatusEnum } from "../models/IUser";
 
@@ -22,12 +23,13 @@ interface IAuthUser {
 
 export const AUTH_USER_STORE_NAME = "bingo-auth-user";
 export const ACTIVE_GAME_STORE_NAME = "active-game";
+export const ACTIVE_GAME_SOLD_CARDS = "game-sold-cards";
+export const SOUND_PREFERENCE = "sound-preference";
 
 /** stores authenticated user data to - localstorage */
 export function storeAuthUser(authUser: IAuthUser) {
   window.localStorage.setItem(AUTH_USER_STORE_NAME, JSON.stringify(authUser));
 }
-
 /** returns authenticated user data from - localstorage */
 export function getAuthUser(): IAuthUser {
   if (localStorage.getItem(AUTH_USER_STORE_NAME)) {
@@ -56,4 +58,40 @@ export function getActiveGame(): IGame {
   }
 
   return {} as IGame;
+}
+export interface ISoldCards {
+  money: number;
+  cards: { id: string }[];
+}
+
+/** stores active game data to - localstorage */
+export function storeSoldCards(soldCards: ISoldCards) {
+  window.localStorage.setItem(
+    ACTIVE_GAME_SOLD_CARDS,
+    JSON.stringify(soldCards)
+  );
+}
+/** returns active game data from - localstorage */
+export function getStoredSoldCards(): ISoldCards {
+  if (localStorage.getItem(ACTIVE_GAME_SOLD_CARDS)) {
+    return JSON.parse(
+      localStorage.getItem(ACTIVE_GAME_SOLD_CARDS) ?? ""
+    ) as ISoldCards;
+  }
+
+  return {} as ISoldCards;
+}
+
+/** stores sound preference - localstorage */
+export function storeSoundPreference(soundLang: AudioLanguage) {
+  window.localStorage.setItem(SOUND_PREFERENCE, soundLang);
+}
+/** returns sound preference - localstorage */
+export function getSoundPreference(): AudioLanguage {
+  if (localStorage.getItem(SOUND_PREFERENCE)) {
+    return (localStorage.getItem(SOUND_PREFERENCE) ??
+      "English") as AudioLanguage;
+  }
+
+  return "English" as AudioLanguage;
 }

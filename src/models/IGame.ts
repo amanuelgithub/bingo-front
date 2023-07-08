@@ -24,5 +24,7 @@ export interface IGameData {
 export interface IGameSocketMessage {
   room?: string; // gameId + cashierId
   gameId?: string;
+  soundLang: "am" | "or" | string;
+  soundUrl: string;
   gameData: IGameData;
 }
