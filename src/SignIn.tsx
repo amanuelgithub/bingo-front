@@ -25,7 +25,8 @@ function SignIn() {
   const navigate = useNavigate();
 
   const handleSignIn = (values: any) => {
-    API.post("/auth/signin", values)
+    console.log("auth form values: ", values);
+    API.post("/auth/signin", { email: values.email, password: values.password })
       .then((result) => {
         const data = result.data;
 
@@ -74,7 +75,7 @@ function SignIn() {
         }
       })
       .catch((err) => {
-        console.log("Error: ", err.response.data);
+        console.log("Error: ", err.response);
         setAuthError(true);
       });
   };
