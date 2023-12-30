@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../state/contexts/auth-context";
-import API from "../../../config/api";
-import { getAuthUser, storeAuthUser } from "../../../util/localstorage";
-import DashboardContainer from "./DashboardContainer";
-import { AuthActionTypes } from "../../../state/actions/auth-actions";
+import { AuthContext } from "../../state/contexts/auth-context";
+import API from "../../config/api";
+import { getAuthUser, storeAuthUser } from "../../util/localstorage";
+import { AuthActionTypes } from "../../state/actions/auth-actions";
+import DashboardLayout from "../dashboard-layout/DashboardLayout";
+import { adminSidebarItems } from "./admin-sidebar-items";
 
-function AgentWrapper() {
+function AdminWrapper() {
   const [completed, setCompleted] = useState(false);
   const { dispatch } = useContext(AuthContext);
 
@@ -16,7 +17,7 @@ function AgentWrapper() {
     API.get(`/users/${id}`).then((result) => {
       const user = result.data;
 
-      console.log("find one user: ", user.agent.branchId);
+      console.log("find one user: ", user);
 
       dispatch({
         type: AuthActionTypes.LOGIN,
@@ -28,9 +29,9 @@ function AgentWrapper() {
         role: user.role,
         status: user.status,
 
-        branchId: user.agent.branchId,
+        branchId: undefined,
 
-        agentId: user.agent.id,
+        agentId: undefined,
         cashierId: undefined,
 
         access_token: accessToken,
@@ -40,16 +41,15 @@ function AgentWrapper() {
       storeAuthUser({
         ...getAuthUser(),
         branchId: undefined,
-        // branchId: user.agent.branchId,
-        agentId: user.agent.id,
-        cashierId: undefined,
       });
 
       setCompleted(true);
     });
   }, []);
 
-  return <div>{completed && <DashboardContainer />}</div>;
+  return (
+    <>{completed && <DashboardLayout sidebarItems={adminSidebarItems} />}</>
+  );
 }
 
-export default AgentWrapper;
+export default AdminWrapper;

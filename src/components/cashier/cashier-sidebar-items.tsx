@@ -5,8 +5,9 @@ import {
   AiOutlineCreditCard,
   AiOutlinePlayCircle,
 } from "react-icons/ai";
+import { ISidebarItem } from "../../models/ISidebarItem";
 
-export const agentSidebarItems = [
+export const cashierSidebarItems: ISidebarItem[] = [
   {
     text: "Cards",
     icon: <AiOutlineCreditCard />,

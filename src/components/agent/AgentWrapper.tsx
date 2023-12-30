@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../state/contexts/auth-context";
-import API from "../../../config/api";
-import { getAuthUser, storeAuthUser } from "../../../util/localstorage";
-import Dashboard from "./Dashboard";
-import { AuthActionTypes } from "../../../state/actions/auth-actions";
+import { AuthContext } from "../../state/contexts/auth-context";
+import API from "../../config/api";
+import { getAuthUser, storeAuthUser } from "../../util/localstorage";
+import { AuthActionTypes } from "../../state/actions/auth-actions";
+import DashboardLayout from "../dashboard-layout/DashboardLayout";
+import { agentSidebarItems } from "./agent-sidebar-items";
 
-function CashierWrapper() {
+function AgentWrapper() {
   const [completed, setCompleted] = useState(false);
   const { dispatch } = useContext(AuthContext);
 
@@ -16,7 +17,7 @@ function CashierWrapper() {
     API.get(`/users/${id}`).then((result) => {
       const user = result.data;
 
-      console.log("find one user: ", user);
+      console.log("find one user: ", user.agent.branchId);
 
       dispatch({
         type: AuthActionTypes.LOGIN,
@@ -28,10 +29,10 @@ function CashierWrapper() {
         role: user.role,
         status: user.status,
 
-        branchId: user.cashier.branchId,
+        branchId: user.agent.branchId,
 
-        cashierId: user.cashier.id,
-        agentId: undefined,
+        agentId: user.agent.id,
+        cashierId: undefined,
 
         access_token: accessToken,
         isLoggedIn,
@@ -39,16 +40,19 @@ function CashierWrapper() {
 
       storeAuthUser({
         ...getAuthUser(),
-        branchId: user.cashier.branchId,
-        cashierId: user.cashier.id,
-        agentId: undefined,
+        branchId: undefined,
+        // branchId: user.agent.branchId,
+        agentId: user.agent.id,
+        cashierId: undefined,
       });
 
       setCompleted(true);
     });
   }, []);
 
-  return <div>{completed && <Dashboard />}</div>;
+  return (
+    <>{completed && <DashboardLayout sidebarItems={agentSidebarItems} />}</>
+  );
 }
 
-export default CashierWrapper;
+export default AgentWrapper;
