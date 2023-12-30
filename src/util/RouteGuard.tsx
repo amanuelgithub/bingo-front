@@ -3,13 +3,17 @@ import { Navigate, Outlet } from "react-router-dom";
 import { UserRoleEnum } from "../models/IUser";
 import { AUTH_USER_STORE_NAME } from "./localstorage";
 
-function CashierRoutes() {
+export default function RouteGuard({
+  allowedRole,
+}: {
+  allowedRole: UserRoleEnum;
+}) {
   if (localStorage.getItem(AUTH_USER_STORE_NAME)) {
     const { isLoggedIn, role } = JSON.parse(
       localStorage.getItem(AUTH_USER_STORE_NAME) ?? ""
     );
 
-    return isLoggedIn && role === UserRoleEnum.CASHIER ? (
+    return isLoggedIn && role === allowedRole ? (
       <Outlet />
     ) : (
       <Navigate to="/signin" />
@@ -18,5 +22,3 @@ function CashierRoutes() {
 
   return <Navigate to="/signin" />;
 }
-
-export default CashierRoutes;

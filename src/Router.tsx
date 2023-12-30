@@ -5,19 +5,16 @@ import SellCard from "./components/cashier/SellCard";
 import ViewCard from "./components/ViewCard";
 import FindAccount from "./components/FindAccount";
 import RecoverPassword from "./components/RecoverPassword";
-import SuperAdminRoutes from "./util/SuperAdminRoutes";
-import AgentRoutes from "./util/AgentRoutes";
-import CashierRoutes from "./util/CashierRoutes";
 import { default as CardsAgent } from "./components/agent/Cards";
 import { default as CardsCashier } from "./components/cashier/Cards";
-import AdminWrapper from "./components/bingo-admin/Dashboard/AdminWrapper";
+import AdminWrapper from "./components/bingo-admin/AdminWrapper";
 import Agents from "./components/bingo-admin/agents/Agents";
 import Branches from "./components/bingo-admin/branches/Branches";
-import AgentWrapper from "./components/agent/Dashboard/AgentWrapper";
+import AgentWrapper from "./components/agent/AgentWrapper";
 import Cashiers from "./components/agent/cashiers/Cashiers";
 import RegisterCard from "./components/agent/RegisterCard";
 import UpdateCard from "./components/agent/UpdateCard";
-import CashierWrapper from "./components/cashier/Dashboard/CashierWrapper";
+import CashierWrapper from "./components/cashier/CashierWrapper";
 import PageNotFound from "./components/PageNotFound";
 import Game from "./components/game/Game";
 import GameTest from "./components/game/GameTest";
@@ -27,6 +24,8 @@ import AgentDashboard from "./components/agent/Dashboard";
 import AdminDashboard from "./components/bingo-admin/Dashboard";
 import CashierDetail from "./components/bingo-admin/cashiers/CashierDetail";
 import SoundSetting from "./components/cashier/SoundSetting";
+import RouteGuard from "./util/RouteGuard";
+import { UserRoleEnum } from "./models/IUser";
 
 function Router() {
   return (
@@ -41,19 +40,19 @@ function Router() {
       <Route path="/recover-password" element={<RecoverPassword />} />
 
       {/* super-admin routes */}
-      <Route element={<SuperAdminRoutes />}>
+      <Route element={<RouteGuard allowedRole={UserRoleEnum.SUPER_ADMIN} />}>
         <Route path="/admin-dashboard" element={<AdminWrapper />}>
           <Route index element={<AdminDashboard />} />
           {/* branches */}
           <Route path="branches" element={<Branches />} />
           {/* agents */}
           <Route path="agents" element={<Agents />} />
-          <Route path="agent-detail" element={<AgentDetail />} />
+          <Route path="agent-detail/:id" element={<AgentDetail />} />
         </Route>
       </Route>
 
       {/* agent routes */}
-      <Route element={<AgentRoutes />}>
+      <Route element={<RouteGuard allowedRole={UserRoleEnum.AGENT} />}>
         <Route path="agent-dashboard" element={<AgentWrapper />}>
           <Route index element={<AgentDashboard />} />
           <Route path="cashiers" element={<Cashiers />} />
@@ -65,7 +64,7 @@ function Router() {
       </Route>
 
       {/* cashier routes */}
-      <Route element={<CashierRoutes />}>
+      <Route element={<RouteGuard allowedRole={UserRoleEnum.CASHIER} />}>
         <Route path="cashier-dashboard" element={<CashierWrapper />}>
           <Route path="create-game" element={<CreateGame />} />
           <Route path="cards" element={<CardsCashier />} />

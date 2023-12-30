@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GiCash } from "react-icons/gi";
 import { getAuthUser } from "../../util/localstorage";
 import API from "../../config/api";
@@ -13,8 +13,6 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-// import faker from "faker";
-import { faker } from "@faker-js/faker";
 
 ChartJS.register(
   CategoryScale,

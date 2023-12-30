@@ -1,16 +1,35 @@
-import React, { useEffect, useState } from "react";
-import TextField from "../../form/TextField";
+import { useEffect, useState } from "react";
 import { getAuthUser } from "../../../util/localstorage";
 import API from "../../../config/api";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { Input } from "../../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
+import { Button } from "../../ui/button";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../../ui/card";
 
 function AgentDetail() {
   const [query, setQuery] = useState<any>();
   const [agents, setAgents] = useState<any>();
   const [agent, setAgent] = useState<any>();
 
-  const { state } = useLocation();
+  const { id: agentId } = useParams();
 
   const [selectedBranchId, setSelectedBranchId] = useState("");
   const [branches, setBranches] = useState([
@@ -51,6 +70,10 @@ function AgentDetail() {
   };
 
   useEffect(() => {
+    console.log("branches: ", branches);
+  }, [branches]);
+
+  useEffect(() => {
     fetchAgents();
   }, []);
 
@@ -59,7 +82,7 @@ function AgentDetail() {
   };
 
   const handleBranchSelection = (e: any) => {
-    setSelectedBranchId(e.target.value);
+    setSelectedBranchId(e);
   };
 
   const handleAgentSelection = (agentId: string) => {
@@ -80,12 +103,12 @@ function AgentDetail() {
 
   useEffect(() => {
     // @ts-ignore
-    if (state?.agentId) {
+    if (agentId) {
       // @ts-ignore
-      fetchAgent(state.agentId);
+      fetchAgent(agentId);
     }
     // @ts-ignore
-  }, [state]);
+  }, [agentId]);
 
   useEffect(() => {
     setQuery("");
@@ -93,12 +116,12 @@ function AgentDetail() {
 
   return (
     <div className="p-2">
-      <TextField
+      <Input
         placeholder="search agent by email..."
         onChange={(e) => handleQueryChange(e)}
       />
 
-      <div className="border border-gray-300">
+      <div className="mt-4  border border-gray-300">
         {query &&
           agents
             .filter((agent: any) => agent.user.email.includes(query))
@@ -114,57 +137,151 @@ function AgentDetail() {
       </div>
 
       {agent && (
-        <div className="flex flex-col items-start justify-center sm:flex-row sm:justify-between sm:p-16">
+        <div className="flex flex-col items-start justify-center gap-2 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           {/* left section */}
-          <div className="flex w-full flex-col gap-1">
-            <h1 className="text-lg font-bold text-gray-800">Agent Info</h1>
-            <hr />
 
-            <h3>* Username: {agent?.user?.username ?? ""}</h3>
-            <hr />
-            <h3>* Phone: {agent?.user?.Phone ?? ""}</h3>
-            <hr />
-            <h3>* Email: {agent?.user?.email ?? ""}</h3>
-            <hr />
-            <h3>* Email Verified: {agent?.user?.isEmailVerified ?? ""}</h3>
-            <hr />
-            <h3>* Role: {agent?.user?.role ?? ""}</h3>
-            <hr />
-            <h3>* Status: {agent?.user?.status ?? ""}</h3>
-            <hr />
-          </div>
+          <Card className="flex w-full flex-col gap-1">
+            <CardHeader>
+              <CardTitle>Agent Info</CardTitle>
+
+              <hr />
+            </CardHeader>
+            {/* <h1 className="text-lg font-bold text-gray-800"></h1> */}
+
+            <CardContent>
+              <p className="flex items-center justify-between gap-2">
+                <h3 className="w-2/5 text-start text-base font-semibold uppercase text-muted-foreground">
+                  * Username
+                </h3>
+
+                <span className="w-3/5 text-start">
+                  <span className="text-lg font-bold"> {"=>"} </span>{" "}
+                  {agent?.user?.username ?? ""}
+                </span>
+              </p>
+
+              <hr />
+
+              <p className="flex items-center justify-between gap-2">
+                <h3 className="w-2/5 text-start text-base font-semibold uppercase text-muted-foreground">
+                  * Phone
+                </h3>
+
+                <span className="w-3/5 text-start">
+                  <span className="text-lg font-bold"> {"=>"} </span>{" "}
+                  {agent?.user?.Phone ?? ""}
+                </span>
+              </p>
+
+              <hr />
+
+              <p className="flex items-center justify-between gap-2">
+                <h3 className="w-2/5 text-start text-base font-semibold uppercase text-muted-foreground">
+                  * Email
+                </h3>
+
+                <span className="w-3/5 text-start">
+                  <span className="text-lg font-bold"> {"=>"}</span>{" "}
+                  {agent?.user?.email ?? ""}
+                </span>
+              </p>
+
+              <hr />
+
+              <p className="flex items-center justify-between gap-2">
+                <h3 className="w-2/5 text-start text-base font-semibold uppercase text-muted-foreground">
+                  * Email Verified
+                </h3>
+
+                <span className="w-3/5 text-start">
+                  <span className="text-lg font-bold"> {"=>"}</span>{" "}
+                  {agent?.user?.isEmailVerified ?? ""}
+                </span>
+              </p>
+
+              <hr />
+
+              <p className="flex items-center justify-between gap-2">
+                <h3 className="w-2/5 text-start text-base font-semibold uppercase text-muted-foreground">
+                  * Role
+                </h3>
+
+                <span className="w-3/5 text-start">
+                  <span className="text-lg font-bold"> {"=>"} </span>{" "}
+                  {agent?.user?.role ?? ""}
+                </span>
+              </p>
+
+              <hr />
+
+              <p className="flex items-center justify-between gap-2">
+                <h3 className="w-2/5 text-start text-base font-semibold uppercase text-muted-foreground">
+                  * Status
+                </h3>
+
+                <span className="w-3/5 text-start">
+                  <span className="text-lg font-bold"> {"=>"} </span>{" "}
+                  {agent?.user?.status ?? ""}
+                </span>
+              </p>
+
+              <hr />
+
+              <p className="flex items-center justify-between gap-2">
+                <h3 className="w-2/5 text-start text-base font-semibold uppercase text-muted-foreground">
+                  * Phone
+                </h3>
+
+                <span className="w-3/5 text-start">
+                  <span className="text-lg font-bold"> {"=>"}</span>{" "}
+                  {agent?.user?.Phone ?? ""}
+                </span>
+              </p>
+
+              <hr />
+            </CardContent>
+          </Card>
 
           {/* right section */}
           <div className="flex w-full flex-col justify-end">
             <div className="flex flex-row items-center justify-center gap-2">
               <div className="w-full">
                 {/* BranchId */}
-                <select
-                  id="branchId"
+                <Select
                   name="branchId"
-                  //   as="select"
-                  className="w-full border-2 border-black py-2"
-                  onChange={(e) => handleBranchSelection(e)}
+                  onValueChange={(e: string) => handleBranchSelection(e)}
                 >
-                  {branches && (
-                    <>
-                      <option value="">select branch</option>
-                      {branches.map((branch) => (
-                        <option value={branch.id}>{branch.name}</option>
-                      ))}
-                    </>
-                  )}
-                </select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Branch" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Branches</SelectLabel>
+
+                      {branches && (
+                        <>
+                          {branches.map((branch) => (
+                            <SelectItem value={branch.id}>
+                              {branch.name}
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <button
+              <Button
                 type="button"
                 onClick={handleAddBranchToAgent}
-                className="flex items-center justify-end gap-2 border border-green-500 bg-green-500 px-4 py-2 text-white"
+                size={"sm"}
+                // className="flex items-center justify-end gap-2 border border-green-500 bg-green-500 px-4 py-2 text-white"
               >
                 <AiOutlinePlus className="text-white" />
                 Add
-              </button>
+              </Button>
             </div>
 
             <div className="">
@@ -179,7 +296,7 @@ function AgentDetail() {
                             #
                           </th>
                           <th scope="col" className="px-6 py-4">
-                            Branch Name
+                            Agent's Branches
                           </th>
                         </tr>
                       </thead>

@@ -2,8 +2,9 @@ import { BsCardText, BsFillPersonLinesFill } from "react-icons/bs";
 import { GiArchiveRegister } from "react-icons/gi";
 import { RiDashboardLine } from "react-icons/ri";
 import { IoPeopleOutline } from "react-icons/io5";
+import { ISidebarItem } from "../../models/ISidebarItem";
 
-export const agentSidebarItems = [
+export const agentSidebarItems: ISidebarItem[] = [
   {
     text: "Dashboard",
     icon: <RiDashboardLine />,
