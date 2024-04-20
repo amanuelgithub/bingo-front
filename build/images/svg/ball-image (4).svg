@@ -1,0 +1,23 @@
+<svg width="383" height="384" viewBox="0 0 383 384" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="191.5" cy="191.5" r="191.5" fill="#F2F2F2"/>
+<circle cx="191" cy="197" r="167" fill="#FF8181"/>
+<rect x="79" y="120" width="224" height="154" rx="77" fill="#F2F2F2"/>
+<path d="M352.5 84L310 39L258.5 91.5L295.5 141L352.5 84Z" fill="#FF8181" stroke="#FF8181"/>
+<path d="M26 93.5L65 47L103 85L82.5 150L26 93.5Z" fill="#FF8181" stroke="#FF8181"/>
+<path d="M83 350L38.5 308L76 271.5L158.5 274.5L83 350Z" fill="#FF8181" stroke="#FF8181"/>
+<path d="M338.5 315.5L291.5 355.5L210.5 274.5L294.5 273L338.5 315.5Z" fill="#FF8181" stroke="#FF8181"/>
+<circle cx="191" cy="200" r="184" fill="white" fill-opacity="0.3"/>
+<mask id="mask0_1_79" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="383" height="383">
+<circle cx="191.5" cy="191.5" r="191.5" fill="#F2F2F2"/>
+</mask>
+<g mask="url(#mask0_1_79)">
+<ellipse cx="185" cy="35.5" rx="130" ry="54.5" fill="#F6F6F6"/>
+<ellipse cx="182.5" cy="372" rx="120.5" ry="68" fill="url(#paint0_linear_1_79)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_1_79" x1="182.5" y1="304" x2="182.5" y2="440" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F5F5F5"/>
+<stop offset="1" stop-color="#8A8A8A"/>
+</linearGradient>
+</defs>
+</svg>
