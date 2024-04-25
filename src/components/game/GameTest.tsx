@@ -19,7 +19,8 @@ function GameTest() {
   };
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8001");
+    const newSocket = io("http://157.230.49.88:8001");
+    // const newSocket = io("http://localhost:8001");
     setSocket(newSocket);
   }, [setSocket]);
 
@@ -47,11 +48,7 @@ function GameTest() {
           <li key={index}>{JSON.stringify(msg)}</li>
         ))}
       </ul>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
+      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
 
       <button type="button" onClick={() => sendMessage(message)}>
         Send

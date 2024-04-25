@@ -9,12 +9,7 @@ import WaitingToStart from "./WaitingToStart";
 import { Socket, io } from "socket.io-client";
 import { GameStateEnum, IGame, IGameSocketMessage } from "../../models/IGame";
 import { motion, useAnimationControls } from "framer-motion";
-import {
-  ISoldCards,
-  getAuthUser,
-  storeCalledNumbers,
-  storeSoldCards,
-} from "../../util/localstorage";
+import { ISoldCards, getAuthUser, storeCalledNumbers, storeSoldCards } from "../../util/localstorage";
 import API from "../../config/api";
 import { IBall } from "../../models/IBall";
 import FailedToConnect from "../FailedToConnect";
@@ -27,37 +22,28 @@ function Game() {
   const [activeGame, setActiveGame] = useState<IGame>();
 
   const [loading, setLoading] = useState(true);
-  const [gameState, setGameState] = useState<GameStateEnum>(
-    GameStateEnum.CREATED
-  );
+  const [gameState, setGameState] = useState<GameStateEnum>(GameStateEnum.CREATED);
 
-  const [calledBallNumbers, setCalledBallNumbers] = useState<
-    (number | undefined)[]
-  >([]);
-  const [last4CalledBalls, setLast4CalledBalls] = useState<
-    (number | undefined)[]
-  >([]);
+  const [calledBallNumbers, setCalledBallNumbers] = useState<(number | undefined)[]>([]);
+  const [last4CalledBalls, setLast4CalledBalls] = useState<(number | undefined)[]>([]);
 
   // current playing number index = playingNumbers[currentIndex]
-  const [currentPlayingNumber, setCurrentPlayingNumber] = useState<
-    number | undefined
-  >();
+  const [currentPlayingNumber, setCurrentPlayingNumber] = useState<number | undefined>();
 
   const { updateCalledNumbers } = useCalledNumbers();
 
   const [socket, setSocket] = useState<Socket>();
-  const [gameSocketMessage, setGameSocketMessage] =
-    useState<IGameSocketMessage>({
-      room: "",
-      gameId: "",
-      soundLang: "am",
-      soundUrl: "",
-      gameData: {
-        currentIndex: 0,
-        gameState: GameStateEnum.CREATED,
-        playingNumbers: [],
-      },
-    });
+  const [gameSocketMessage, setGameSocketMessage] = useState<IGameSocketMessage>({
+    room: "",
+    gameId: "",
+    soundLang: "am",
+    soundUrl: "",
+    gameData: {
+      currentIndex: 0,
+      gameState: GameStateEnum.CREATED,
+      playingNumbers: [],
+    },
+  });
 
   const [count, setCount] = useState(15);
 
@@ -76,7 +62,8 @@ function Game() {
 
   // setup socket connection
   useEffect(() => {
-    const newSocket = io("http://localhost:8001");
+    const newSocket = io("http://157.230.49.88:8001");
+    // const newSocket = io("http://localhost:8001");
     setSocket(newSocket);
 
     // console.log("socket connected");
@@ -122,10 +109,7 @@ function Game() {
   // interval that run to fetch active game if their are none
   useEffect(() => {
     let getActiveGameInterval: any;
-    if (
-      gameState === GameStateEnum.END ||
-      gameState === GameStateEnum.CREATED
-    ) {
+    if (gameState === GameStateEnum.END || gameState === GameStateEnum.CREATED) {
       getActiveGameInterval = setInterval(() => {
         fetchActiveGameOfCashier();
       }, 2000);
@@ -244,10 +228,7 @@ function Game() {
     let gamePlayCallInterval: any;
 
     // do something if the game is ended
-    if (
-      gameSocketMessage.gameData?.gameState === GameStateEnum.END &&
-      gameState === GameStateEnum.END
-    ) {
+    if (gameSocketMessage.gameData?.gameState === GameStateEnum.END && gameState === GameStateEnum.END) {
       refresh();
       // remove sold info from localstorage
       storeSoldCards({} as ISoldCards);
@@ -287,9 +268,7 @@ function Game() {
         // increase the currentPlayingIndex
         if (gameSocketMessage.gameData) {
           setCurrentPlayingNumber(
-            gameSocketMessage.gameData?.playingNumbers[
-              gameSocketMessage.gameData?.currentIndex
-            ]
+            gameSocketMessage.gameData?.playingNumbers[gameSocketMessage.gameData?.currentIndex]
           );
         }
       }, 4500);
@@ -318,20 +297,13 @@ function Game() {
       // context value will not be sync since the game page
       // is loaded in another page
       updateCalledNumbers(calledBallNumbers);
-      storeCalledNumbers(
-        calledBallNumbers.filter((val): val is number => val !== undefined)
-      );
+      storeCalledNumbers(calledBallNumbers.filter((val): val is number => val !== undefined));
     }
 
     if (calledBallNumbers.length < 4) {
       setLast4CalledBalls(calledBallNumbers.slice());
     } else {
-      setLast4CalledBalls(
-        calledBallNumbers.slice(
-          calledBallNumbers.length - 4,
-          calledBallNumbers.length
-        )
-      );
+      setLast4CalledBalls(calledBallNumbers.slice(calledBallNumbers.length - 4, calledBallNumbers.length));
     }
   }, [calledBallNumbers]);
 
@@ -372,13 +344,7 @@ function Game() {
       </div>
 
       {/* count-down timer component */}
-      {!loading && (
-        <CountDown
-          gameState={gameState}
-          count={count}
-          handleCount={handleCount}
-        />
-      )}
+      {!loading && <CountDown gameState={gameState} count={count} handleCount={handleCount} />}
 
       {/* left */}
       <div className="h-[100%] w-[35%]">
@@ -386,11 +352,7 @@ function Game() {
         <Aesthetic4Balls setLoading={setLoading} />
         {/* middle */}
         <PlayBall
-          ball={
-            gameSocketMessage &&
-            currentPlayingNumber &&
-            balls[currentPlayingNumber - 1]
-          }
+          ball={gameSocketMessage && currentPlayingNumber && balls[currentPlayingNumber - 1]}
           gameState={gameState}
         />
         {/* bottom */}
@@ -415,9 +377,7 @@ function Game() {
           className="flex h-[85%] w-[100%] flex-col items-center justify-start"
         >
           {/* B -> row */}
-          <div
-            className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}
-          >
+          <div className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}>
             <h1
               className="w-[7%] border-r-2 border-blue-600 text-center  font-extrabold text-blue-600 shadow-gray-900/90 drop-shadow-lg"
               style={{ fontSize: "4vw" }}
@@ -437,9 +397,7 @@ function Game() {
           </div>
 
           {/* I -> row */}
-          <div
-            className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}
-          >
+          <div className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}>
             <h1
               className="w-[7%] border-r-2 border-green-600 text-center font-extrabold text-green-600 shadow-gray-900/90 drop-shadow-lg"
               style={{ fontSize: "4vw" }}
@@ -459,9 +417,7 @@ function Game() {
           </div>
 
           {/* N -> row */}
-          <div
-            className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}
-          >
+          <div className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}>
             <h1
               className="w-[7%] border-r-2 border-yellow-600 text-center font-extrabold text-yellow-600 shadow-gray-900/90 drop-shadow-lg"
               style={{ fontSize: "4vw" }}
@@ -481,9 +437,7 @@ function Game() {
           </div>
 
           {/* G -> row */}
-          <div
-            className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}
-          >
+          <div className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}>
             <h1
               className="w-[7%] border-r-2 border-purple-600 text-center font-extrabold text-purple-600 shadow-gray-900/90 drop-shadow-lg"
               style={{ fontSize: "4vw" }}
@@ -503,9 +457,7 @@ function Game() {
           </div>
 
           {/* O -> row */}
-          <div
-            className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}
-          >
+          <div className={`flex h-[10%] w-[95%] items-center justify-center gap-[1%] bg-white px-[2%]`}>
             <h1
               className="w-[7%] border-r-2 border-orange-600 text-center font-extrabold text-orange-600 shadow-gray-900/90 drop-shadow-lg"
               style={{ fontSize: "4vw" }}

@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "../form/Button";
 import API from "../../config/api";
-import {
-  ISoldCards,
-  getAuthUser,
-  getStoredCalledNumbers,
-  storeSoldCards,
-} from "../../util/localstorage";
+import { ISoldCards, getAuthUser, getStoredCalledNumbers, storeSoldCards } from "../../util/localstorage";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { BsArrowUpRight } from "react-icons/bs";
@@ -20,9 +15,7 @@ import { useCalledNumbers } from "../../state/called-numbers-context";
 
 function SellCard() {
   const [socket, setSocket] = useState<Socket>();
-  const [gameState, setGameState] = useState<GameStateEnum>(
-    GameStateEnum.CREATED
-  );
+  const [gameState, setGameState] = useState<GameStateEnum>(GameStateEnum.CREATED);
 
   // trigger opening and/or closing of the CheckCard child component
   // const [checkingCard, setCheckingCard] = useState(false);
@@ -39,7 +32,8 @@ function SellCard() {
   };
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8001");
+    const newSocket = io("http://157.230.49.88:8001");
+    // const newSocket = io("http://localhost:8001");
     setSocket(newSocket);
   }, [setSocket]);
 
@@ -215,11 +209,7 @@ function SellCard() {
             <div className="flex w-full flex-col gap-4 sm:mt-20 sm:flex-row sm:justify-between ">
               {checkCardId && (
                 <div className="w-full py-4 md:w-5/12">
-                  <CheckCard
-                    key={checkCardId}
-                    cardId={checkCardId}
-                    calledNumbers={calledNumbers}
-                  />
+                  <CheckCard key={checkCardId} cardId={checkCardId} calledNumbers={calledNumbers} />
                 </div>
               )}
 
@@ -227,9 +217,7 @@ function SellCard() {
                 <>
                   {/* sell card */}
                   <div className="w-full py-4 md:w-5/12">
-                    <h1 className="text-2xl font-bold text-gray-600">
-                      Sell Card
-                    </h1>
+                    <h1 className="text-2xl font-bold text-gray-600">Sell Card</h1>
 
                     <div className="my-2">
                       {errors.map((err) => (
@@ -255,11 +243,7 @@ function SellCard() {
                           ))}
                         </select>
 
-                        <Button
-                          disabled={unsoldCards.length <= 0}
-                          onClick={(e) => sellCard(e)}
-                          className={"w-full"}
-                        >
+                        <Button disabled={unsoldCards.length <= 0} onClick={(e) => sellCard(e)} className={"w-full"}>
                           Sell
                         </Button>
                       </form>
@@ -271,34 +255,22 @@ function SellCard() {
               {/* sold card */}
               <div className="flex w-full flex-col gap-1 py-4 md:w-7/12">
                 <div className="flex items-center justify-between gap-8 bg-white px-8 py-2 shadow-lg">
-                  <h1 className="text-2xl font-bold text-gray-600">
-                    Sold Cards
-                  </h1>
+                  <h1 className="text-2xl font-bold text-gray-600">Sold Cards</h1>
                   <p className="font-bold text-gray-500">
                     Total: {"  "}
-                    <span className="font-semibold text-green-600">
-                      {gamePlays.length}
-                    </span>
+                    <span className="font-semibold text-green-600">{gamePlays.length}</span>
                   </p>
                 </div>
 
                 {/* Loading */}
                 {gamePlays && gamePlays.length <= 0 ? (
                   <div className="flex w-full items-center justify-center">
-                    <ReactLoading
-                      type={"spokes"}
-                      color={"#4d4dff"}
-                      height={32}
-                      width={32}
-                    />
+                    <ReactLoading type={"spokes"} color={"#4d4dff"} height={32} width={32} />
                   </div>
                 ) : null}
 
                 {gamePlays.map((play, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-row items-center justify-between gap-8 bg-gray-200 px-8 py-2"
-                  >
+                  <div key={index} className="flex flex-row items-center justify-between gap-8 bg-gray-200 px-8 py-2">
                     <h3 className="text-sm ">{play.cardId}</h3>
 
                     <div className="flex flex-row gap-4">
