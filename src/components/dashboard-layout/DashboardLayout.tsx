@@ -8,9 +8,7 @@ const MIN_SCREEN_SIZE_TO_OPEN_SIDEBAR = 768;
 
 function DashboardLayout({ sidebarItems }: { sidebarItems: ISidebarItem[] }) {
   const [screenSize, setScreenSize] = useState<number>(window.innerWidth);
-  const [openSidebar, setOpenSidebar] = useState(
-    screenSize > MIN_SCREEN_SIZE_TO_OPEN_SIDEBAR ? true : false
-  );
+  const [openSidebar, setOpenSidebar] = useState(screenSize > MIN_SCREEN_SIZE_TO_OPEN_SIDEBAR ? true : false);
 
   const handleResize = () => {
     setScreenSize(window.innerWidth);
@@ -34,11 +32,7 @@ function DashboardLayout({ sidebarItems }: { sidebarItems: ISidebarItem[] }) {
         {/* left -- sidebar */}
         <div
           className={`absolute left-0 top-0 z-10 bg-yellow-500 shadow-2xl drop-shadow-lg 
-         ${
-           screenSize > MIN_SCREEN_SIZE_TO_OPEN_SIDEBAR
-             ? "w-[25vw]"
-             : "w-[75vw]"
-         } 
+         ${screenSize > MIN_SCREEN_SIZE_TO_OPEN_SIDEBAR ? "w-[25vw]" : "w-[75vw]"} 
           ${
             openSidebar
               ? "translate-x-0 transform duration-300 ease-in-out"
@@ -53,16 +47,10 @@ function DashboardLayout({ sidebarItems }: { sidebarItems: ISidebarItem[] }) {
         </div>
 
         {/* right -- navbar & content */}
-        <div
-          className={
-            openSidebar && screenSize > MIN_SCREEN_SIZE_TO_OPEN_SIDEBAR
-              ? "w-[75vw]"
-              : "w-[100vw]"
-          }
-        >
+        <div className={openSidebar && screenSize > MIN_SCREEN_SIZE_TO_OPEN_SIDEBAR ? "w-[75vw]" : "w-[100vw]"}>
           <Navbar handleOpenSidebar={handleSidebarMenuOpenState} />
 
-          <div className="h-full w-full bg-gray-100">
+          <div className="h-full w-full bg-gray-100 sm:p-16">
             {/* content */}
             <Outlet />
           </div>

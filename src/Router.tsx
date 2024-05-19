@@ -9,7 +9,8 @@ import { default as CardsAgent } from "./components/agent/Cards";
 import { default as CardsCashier } from "./components/cashier/Cards";
 import AdminWrapper from "./components/bingo-admin/AdminWrapper";
 import Agents from "./components/bingo-admin/agents/Agents";
-import Branches from "./components/bingo-admin/branches/Branches";
+import AdminBranches from "./components/bingo-admin/branches/Branches";
+import AgentBranches from "./components/agent/branches/Branches";
 import AgentWrapper from "./components/agent/AgentWrapper";
 import Cashiers from "./components/agent/cashiers/Cashiers";
 import RegisterCard from "./components/agent/RegisterCard";
@@ -44,7 +45,7 @@ function Router() {
         <Route path="/admin-dashboard" element={<AdminWrapper />}>
           <Route index element={<AdminDashboard />} />
           {/* branches */}
-          <Route path="branches" element={<Branches />} />
+          <Route path="branches" element={<AdminBranches />} />
           {/* agents */}
           <Route path="agents" element={<Agents />} />
           <Route path="agent-detail/:id" element={<AgentDetail />} />
@@ -57,6 +58,7 @@ function Router() {
           <Route index element={<AgentDashboard />} />
           <Route path="cashiers" element={<Cashiers />} />
           <Route path="cashier-detail" element={<CashierDetail />} />
+          <Route path="branches" element={<AgentBranches />} />
           <Route path="cards" element={<CardsAgent />} />
           <Route path="register-card" element={<RegisterCard />} />
           <Route path="update-card/:cardId" element={<UpdateCard />} />

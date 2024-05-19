@@ -11,6 +11,11 @@ export const agentSidebarItems: ISidebarItem[] = [
     to: "/agent-dashboard",
   },
   {
+    text: "Branches",
+    icon: <IoPeopleOutline />,
+    to: "/agent-dashboard/branches",
+  },
+  {
     text: "Cashiers",
     icon: <IoPeopleOutline />,
     to: "/agent-dashboard/cashiers",
