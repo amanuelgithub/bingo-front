@@ -62,8 +62,8 @@ function Game() {
 
   // setup socket connection
   useEffect(() => {
-    const newSocket = io("http://157.230.49.88:8001");
-    // const newSocket = io("http://localhost:8001");
+    // const newSocket = io("http://157.230.49.88:8001");
+    const newSocket = io("http://localhost:8001");
     setSocket(newSocket);
 
     // console.log("socket connected");
